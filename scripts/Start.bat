@@ -6,5 +6,5 @@ if not exist "venv\Scripts\python.exe" (
   pause
   exit /b 1
 )
-venv\Scripts\python.exe main.py --listen 127.0.0.1 --port 8188 %*
+venv\Scripts\python.exe main.py --listen 127.0.0.1 --port 8188 --enable-manager %*
 pause

@@ -54,6 +54,9 @@ Step "4) Install PyTorch (NVIDIA 20-series and newer, incl. RTX 50 Blackwell -> 
 Step "5) Install ComfyUI dependencies"
 & "tmp\ComfyUI\venv\Scripts\pip.exe" install -r tmp\ComfyUI\requirements.txt
 
+Step "5b) Install ComfyUI-Manager (v4 pip package; never clone into custom_nodes)"
+& "tmp\ComfyUI\venv\Scripts\pip.exe" install -r tmp\ComfyUI\manager_requirements.txt
+
 Step "6) Verify CUDA"
 & "tmp\ComfyUI\venv\Scripts\python.exe" -c "import torch; print('torch', torch.__version__); print('cuda_available', torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'no-cuda-gpu')"
 

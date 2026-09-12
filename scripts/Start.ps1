@@ -17,7 +17,8 @@ if (-not (Test-Path $Python)) {
   Write-Error "venv not found. Run scripts\Install.ps1 first."
 }
 
-# Default: localhost only. Add --listen 0.0.0.0 only if you need LAN access.
-$ComfyArgs = @("main.py", "--listen", "127.0.0.1", "--port", "8188") + $args
+# Default: localhost only (+ Manager enabled). Add --listen 0.0.0.0 only if you need LAN access.
+# Manager flags: --enable-manager (default here) | --enable-manager-legacy-ui | --disable-manager-ui
+$ComfyArgs = @("main.py", "--listen", "127.0.0.1", "--port", "8188", "--enable-manager") + $args
 Write-Host "Starting: $Python $($ComfyArgs -join ' ')" -ForegroundColor Cyan
 & $Python @ComfyArgs
