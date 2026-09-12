@@ -173,6 +173,13 @@ cd tmp\ComfyUI
 2. Press **Queue** (or Ctrl+Enter). First run downloads nothing by default but errors `model not found` until you add a checkpoint — that's expected, see §7.1.
 3. Output lands in `tmp\ComfyUI\output\`. Input images go in `tmp\ComfyUI\input\`.
 
+### Stopping ComfyUI
+
+- Started in a terminal (`Start.ps1`, `Start.bat`, or manual): focus that window, press
+  **Ctrl+C** (answer `Y` if it asks to terminate the batch job), then close the window.
+- Running detached / lost the window: Task Manager → find the `python.exe` running
+  `main.py` → End task. Check `http://127.0.0.1:8188` no longer responds.
+
 ### 7.1 Where models go (starter: SDXL-Turbo recommended for 16 GB, great for ≤8 GB too)
 
 | File type | Folder |
