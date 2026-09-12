@@ -184,6 +184,16 @@ cd tmp\ComfyUI
 
 Suggested first model (fast, small, 1–4 steps): SDXL-Turbo — place the `.safetensors` in `models\checkpoints\`, refresh the browser (R), select it in the **Load Checkpoint** node, Queue. (Heavier options for later: Flux.1-Schnell, SD3.5, Wan 2.1/2.2 for video.)
 
+### 7.2 Interface language (i18n)
+
+The UI is switchable per user: gear icon → Settings → **Language** (`Comfy.Locale`).
+Frontend 1.52.7 ships 14 languages: English (default), Chinese (simplified + traditional),
+Russian, Japanese, Korean, French, Spanish, Arabic, Turkish, Portuguese (BR), Farsi,
+Hebrew, Italian. **Hungarian is NOT bundled** — a Hungarian-speaking user picks one of
+the above for now (or uses browser auto-translate as a stopgap). New languages come from
+community translation PRs to `Comfy-Org/ComfyUI_frontend` and arrive via a frontend
+package update — no server flag needed, the setting is per browser.
+
 ## 8. Lower-VRAM / different-PC notes (8–12 GB GPUs)
 
 Same steps work unchanged. Only the launch flags and model choice differ:
