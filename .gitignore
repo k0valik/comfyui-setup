@@ -1,0 +1,7 @@
+# local ComfyUI clone + venvs + models (large, reinstallable)
+tmp/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
