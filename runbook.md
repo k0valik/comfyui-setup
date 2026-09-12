@@ -12,30 +12,75 @@ Lower VRAM (e.g. 8–12 GB) works too — see §8 for the flags.
 
 ---
 
-## 0. What you need before starting (~10 min)
+## 0. From-zero prerequisites: Git + Python + NVIDIA driver (~15 min, do this first)
 
-1. **NVIDIA driver (current).** https://www.nvidia.com/drivers/ — install, reboot, then check:
-   ```powershell
-   nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
-   # expect e.g.: NVIDIA GeForce RTX 5070 Ti, 616.56, 16303 MiB
-   ```
-2. **Git for Windows.** https://git-scm.com/download/win — accept defaults, then check:
-   ```powershell
-   git --version
-   ```
-3. **Python 3.13 or 3.14, 64-bit.** https://www.python.org/downloads/
-   - IMPORTANT: tick **"Add python.exe to PATH"** during install.
-   - ComfyUI docs: 3.14 works, 3.13 is very well supported. This repo was verified on 3.14.3.
-   - Check: `python --version`
-4. **Disk space.** 20 GB minimum free (torch ~2 GB + deps + a starter model 7–30 GB). E: or C: both fine.
-5. No build essentials needed. If `pip install` ever asks for a compiler, stop and tell us — it should never happen.
+Assume a fresh Windows 10/11 machine with **nothing** installed. You need exactly 3 things.
+Pick **Option A (one-line, recommended)** or **Option B (manual download)** per item.
+After each item, run its **Check** line in a *fresh* PowerShell window
+(Start menu → type `PowerShell` → Enter; after any install, close and reopen it).
 
-## 1. Get this repo
+### 0.1 Git (required — without it you cannot even download this repo)
 
 ```powershell
+# Option A (recommended): one line, accepts defaults for you
+winget install --id Git.Git -e --source winget
+```
+- Option B: open https://git-scm.com/download/win → download the 64-bit installer →
+  Next through everything (defaults are fine).
+- Check (fresh PowerShell):
+  ```powershell
+  git --version
+  # expect e.g.: git version 2.53.0.windows.2
+  ```
+- If `git: command not found`: close ALL PowerShell/terminal windows, reopen, retry.
+  Still failing? Reinstall Git and leave the "Add Git to PATH" option enabled.
+
+### 0.2 Python 3.13 or 3.14, 64-bit (required — ComfyUI runs on it)
+
+```powershell
+# Option A (recommended): Python 3.13 (most compatible with custom nodes)
+winget install --id Python.Python.3.13 -e --source winget
+```
+- Option B: open https://www.python.org/downloads/ → download Python 3.13 (or 3.14) 64-bit →
+  run installer → **on the very first screen, tick "Add python.exe to PATH"** →
+  then "Install Now". This checkbox is the #1 cause of failures — do not skip it.
+  (Verified on 3.14.3; ComfyUI docs: 3.14 works, 3.13 is very well supported.)
+- Check (fresh PowerShell):
+  ```powershell
+  python --version
+  # expect e.g.: Python 3.13.x or Python 3.14.3
+  ```
+- If `python: command not found`: reboot-shell first (close/reopen PowerShell).
+  Still failing? `py --version` may work instead — then use `py` wherever this guide says `python`.
+  Last resort: reinstall Python with the PATH checkbox ticked, or
+  `winget install --id Python.Python.3.13 -e --source winget --force`.
+
+### 0.3 NVIDIA driver (required for GPU; skip only for CPU-only mode)
+
+- Open https://www.nvidia.com/drivers/ → your card (e.g. RTX 5070 Ti) → Download → Install → Reboot.
+- Check:
+  ```powershell
+  nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+  # expect e.g.: NVIDIA GeForce RTX 5070 Ti, 616.56, 16303 MiB
+  ```
+- If `nvidia-smi` is unknown: driver install didn't take — reinstall + reboot.
+
+### 0.4 Disk space + what you DON'T need
+
+- 20 GB minimum free (torch ~2 GB + deps + starter model 7–30 GB). E: or C: both fine.
+- You do **NOT** need: admin rights (except if *you* choose system-wide Python),
+  Visual Studio, C++ build tools, Chocolatey, Node.js, Docker, WSL, or CUDA Toolkit
+  (PyTorch bundles its own CUDA — the driver from §0.3 is enough).
+  If any `pip install` ever asks for a compiler, stop — something deviated from this guide.
+
+## 1. Get this repo (needs Git from §0.1)
+
+```powershell
+# fresh PowerShell, pick a home for it (Documents, E:\, etc.)
 git clone <this-repo-url> comfyui
 cd comfyui
 ```
+No Git yet? Go back to §0.1 — there is no way around it.
 
 Repo layout (what's what):
 
@@ -164,6 +209,9 @@ Our wrapper repo itself updates normally (`git pull` at the root); `tmp/` never 
 
 | Symptom | Fix |
 |---|---|
+| `python: command not found` | See §0.2: close/reopen PowerShell; try `py --version`; reinstall Python with **Add to PATH** ticked |
+| `git: command not found` | See §0.1: close/reopen PowerShell; reinstall Git (keep Add-to-PATH enabled) |
+| `winget: command not found` | Old Windows — use Option B manual downloads in §0.1/§0.2, or update App Installer from Microsoft Store |
 | `Torch not compiled with CUDA enabled` | `pip uninstall torch`, reinstall with the §5 line for your GPU, update NVIDIA driver |
 | `pip` tries to build from source / asks for Visual Studio | Wrong Python or index URL — use Python 3.13/3.14 64-bit and the exact §5/§6 commands |
 | Port 8188 busy | `python main.py --port 8189` |

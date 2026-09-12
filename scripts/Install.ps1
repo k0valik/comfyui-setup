@@ -11,11 +11,17 @@ Set-Location $RepoRoot
 
 function Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 
-Step "0) Pre-flight checks"
+Step "0) Pre-flight checks (see runbook §0 if anything is missing)"
+if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+  Write-Error "Python not found. Install it first:  winget install --id Python.Python.3.13 -e --source winget  (or https://www.python.org/downloads/ — tick 'Add python.exe to PATH'), then close/reopen PowerShell. Details: runbook.md §0.2"
+}
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+  Write-Error "Git not found. Install it first:  winget install --id Git.Git -e --source winget  (or https://git-scm.com/download/win), then close/reopen PowerShell. Details: runbook.md §0.1"
+}
 python --version
 git --version
 try { nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv | Select-Object -First 5 } catch {
-  Write-Warning "nvidia-smi not found. Install the latest NVIDIA driver from https://www.nvidia.com/drivers/ and re-run."
+  Write-Warning "nvidia-smi not found. Install the latest NVIDIA driver from https://www.nvidia.com/drivers/, reboot, and re-run. (CPU-only is possible but very slow.) Details: runbook.md §0.3"
 }
 
 Step "1) Clone ComfyUI into tmp/ (local-only, git-ignored)"
