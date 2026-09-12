@@ -219,4 +219,6 @@ Our wrapper repo itself updates normally (`git pull` at the root); `tmp/` never 
 | `git clone` into `tmp/` fails | Check Git installed on Windows (not WSL): `git --version` in PowerShell |
 
 ---
-*Changelog: 2026-09-12 — initial manual install verified (venv + torch cu130 + requirements.txt + CUDA smoke test on RTX 5070 Ti). Next: first real image workflow + starter model download.*
+*Changelog:*
+- *2026-09-12 — manual install verified (venv + torch 2.14.0+cu130 + requirements.txt + CUDA smoke test on RTX 5070 Ti).*
+- *2026-09-12 — scripts e2e-tested in isolated `tmp/script-e2e-test/` (fresh clone + fresh venv via Install.ps1, boot via Start.ps1): `GET /` → 200 ComfyUI page, `/system_stats` → comfyui 0.35.0 / python 3.14.3 / torch 2.14.0+cu130 / cuda:0 RTX 5070 Ti (17.1 GB VRAM). Next: first real image workflow + starter model download.*

@@ -1,27 +1,27 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   Half-automated ComfyUI setup for Windows (no admin required).
   Run from the repo root, e.g.:  powershell -ExecutionPolicy Bypass -File scripts\Install.ps1
   Assumes: Windows 10/11 64-bit, Git + Python 3.13/3.14 + current NVIDIA driver already installed.
-  No Visual Studio / build tools needed — everything installs from prebuilt wheels.
+  No Visual Studio / build tools needed - everything installs from prebuilt wheels.
 #>
 $ErrorActionPreference = "Stop"
-$RepoRoot = Split-Path -Parent $PSSplitPath
+$RepoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $RepoRoot
 
 function Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 
-Step "0) Pre-flight checks (see runbook §0 if anything is missing)"
+Step "0) Pre-flight checks (see runbook sec.0 if anything is missing)"
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
-  Write-Error "Python not found. Install it first:  winget install --id Python.Python.3.13 -e --source winget  (or https://www.python.org/downloads/ — tick 'Add python.exe to PATH'), then close/reopen PowerShell. Details: runbook.md §0.2"
+  Write-Error "Python not found. Install it first:  winget install --id Python.Python.3.13 -e --source winget  (or https://www.python.org/downloads/ - tick 'Add python.exe to PATH'), then close/reopen PowerShell. Details: runbook.md sec.0.2"
 }
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-  Write-Error "Git not found. Install it first:  winget install --id Git.Git -e --source winget  (or https://git-scm.com/download/win), then close/reopen PowerShell. Details: runbook.md §0.1"
+  Write-Error "Git not found. Install it first:  winget install --id Git.Git -e --source winget  (or https://git-scm.com/download/win), then close/reopen PowerShell. Details: runbook.md sec.0.1"
 }
 python --version
 git --version
 try { nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv | Select-Object -First 5 } catch {
-  Write-Warning "nvidia-smi not found. Install the latest NVIDIA driver from https://www.nvidia.com/drivers/, reboot, and re-run. (CPU-only is possible but very slow.) Details: runbook.md §0.3"
+  Write-Warning "nvidia-smi not found. Install the latest NVIDIA driver from https://www.nvidia.com/drivers/, reboot, and re-run. (CPU-only is possible but very slow.) Details: runbook.md sec.0.3"
 }
 
 Step "1) Clone ComfyUI into tmp/ (local-only, git-ignored)"

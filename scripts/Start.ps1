@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   Start ComfyUI (Windows). Double-click friendly.
   Usage: powershell -ExecutionPolicy Bypass -File scripts\Start.ps1 [--lowvram] [--cpu] [extra ComfyUI args...]
@@ -9,7 +9,7 @@
     scripts\Start.ps1 --cpu            # no GPU at all
 #>
 $ErrorActionPreference = "Stop"
-$RepoRoot = Split-Path -Parent $PSSplitPath
+$RepoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location "$RepoRoot\tmp\ComfyUI"
 
 $Python = ".\venv\Scripts\python.exe"
@@ -18,6 +18,6 @@ if (-not (Test-Path $Python)) {
 }
 
 # Default: localhost only. Add --listen 0.0.0.0 only if you need LAN access.
-$Args = @("main.py", "--listen", "127.0.0.1", "--port", "8188") + $args
-Write-Host "Starting: $Python $($Args -join ' ')" -ForegroundColor Cyan
-& $Python @Args
+$ComfyArgs = @("main.py", "--listen", "127.0.0.1", "--port", "8188") + $args
+Write-Host "Starting: $Python $($ComfyArgs -join ' ')" -ForegroundColor Cyan
+& $Python @ComfyArgs
