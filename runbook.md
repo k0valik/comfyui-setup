@@ -109,6 +109,9 @@ powershell -ExecutionPolicy Bypass -File scripts\Start.ps1
 
 Open http://127.0.0.1:8188 — you should see the ComfyUI canvas. Skip to §7.
 
+> Video models (MiniMax H3 + LTX-2.5) live in `runbook_2.md` — agent-oriented workflow
+> covering gated-access, selective download into `models/`, and loader verification.
+
 ## 3. Manual setup — clone ComfyUI into local tmp/
 
 `tmp/` is git-ignored on purpose (multi-GB clone + venv + models must not be committed).
