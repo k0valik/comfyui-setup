@@ -225,6 +225,60 @@ git pull
 
 Our wrapper repo itself updates normally (`git pull` at the root); `tmp/` never conflicts because it's ignored.
 
+## 9.5 SwarmUI (easier graphical front-end on top of ComfyUI) — setup + agent checklist
+
+SwarmUI is a friendly web UI (no node graphs unless you want them) that manages a ComfyUI
+backend underneath. It REUSES our pre-baked install (venv + 86GB models + Manager) —
+it does not replace it. Server: `http://localhost:7801`; it auto-starts its own comfy
+process on port 7821 (so a manually-run :8188 stays untouched).
+
+### What the human does (one-time install)
+
+1. Prereq: .NET SDK 8 or 10 (check: `dotnet --list-sdks`). Missing? The install script
+   offers to add SDK 8 via winget (user-level, no admin).
+2. `powershell -ExecutionPolicy Bypass -File scripts\Install-Swarm.ps1`
+   — clones SwarmUI to `tmp\SwarmUI` and builds it (~30s, 0 warnings expected).
+3. `powershell -ExecutionPolicy Bypass -File scripts\Start-Swarm.ps1`
+   — starts the server; a browser opens (or go to) `http://localhost:7801/Install`.
+4. **Installer wizard — what to pick (critical!):**
+   - Theme/account: anything (e.g. modern_dark, 'just yourself').
+   - **"What backend would you like to use?" → choose `None / Custom / Choose Later`.**
+     (Do NOT click 'ComfyUI (Local)' — that downloads a SECOND 20GB+ comfy into
+     Swarm's own dlbackend folder and duplicates everything.)
+5. After the wizard: main interface → **Server tab → Backends** → **Add Backend** →
+   type: **ComfyUI Self-Starting** → set **StartScript** =
+   `E:/comfyui/tmp/ComfyUI/main.py` (adapt drive if repo lives elsewhere) →
+   leave every other field default → Save → **Restart All Backends**.
+6. First boot takes ~2–4 min: the log shows repeated
+   `Self-Start ComfyUI (Installing 'rembg') exited properly.` lines — that is Swarm's
+   staged dependency check pip-installing a handful of helper packages INTO OUR VENV
+   (rembg, onnxruntime, matplotlib, opencv-python-headless, imageio-ffmpeg, dill,
+   omegaconf; plus updates: diffusers, ultralytics, comfyui_frontend_package).
+   This is expected and one-time. Wait for:
+   `Self-Start ComfyUI-0 on port 7821 started.`
+7. Sanity check: generate a small image from the Generate tab. Done.
+
+### What the agent does (support checklist)
+
+- Verify build: `dotnet build` output ends `0 Error(s)`.
+- Verify graft after the human saves the backend — read `tmp/SwarmUI/Data/Backends.fds`:
+  expect `type: comfyui_selfstart`, `StartScript: E:/comfyui/tmp/ComfyUI/main.py`,
+  `enabled: true`. (`ExtraArgs` may contain `\x` — harmless placeholder.)
+- Verify live state:
+  - `http://127.0.0.1:7801/` → 302 (webserver up)
+  - `http://127.0.0.1:7821/` → 200 (comfy backend up)
+  - listeners: 7801 = SwarmUI.exe, 7821 = python (our venv)
+- Explain the log lines if the human pastes them (see step 6 — dependency staging,
+  not errors).
+- Never let the human point StartScript at a different comfy or delete `tmp/ComfyUI`.
+- GUI fallback for backend management: Server → Backends → ✎ edit / Restart / View Logs.
+
+### Comfy workflow tab
+
+SwarmUI has a full Comfy node-graph editor built in (top tab `Comfy Workflow Editor`):
+the multi-node text→image→video→upscale pipeline can be built/edited there and saved
+via `Use This Workflow`. The backend must be a ComfyUI backend (it is).
+
 ## 10. Troubleshooting
 
 | Symptom | Fix |
