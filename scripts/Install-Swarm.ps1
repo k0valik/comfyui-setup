@@ -41,7 +41,7 @@ New-Item -ItemType Directory -Force "tmp\SwarmUI\Data" | Out-Null
 $Backends = "tmp\SwarmUI\Data\Backends.fds"
 if (-not (Test-Path $Backends)) {
   Write-Warning "Backends.fds not found. Start SwarmUI once (Start-Swarm.ps1), open http://localhost:7801/Install,"
-  Write-Warning "choose 'None / Custom / Choose Later', then follow runbook.md sec.12 to add the backend."
+  Write-Warning "choose 'None / Custom / Choose Later', then follow runbook.md sec.9.5 to add the backend."
 } else {
   Write-Host "Backends.fds present - backend wiring already done."
 }
