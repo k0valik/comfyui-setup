@@ -30,9 +30,9 @@ Two modes — decide first, wrong mode wastes the session:
 - **Fresh setup** (no `tmp/ComfyUI/venv` or Verify-Setup has setup FAILs): run all
   stages 1→7 in order. Resume at first FAIL.
 - **Returning session** (setup was done on a previous day; human wants to USE the
-  pipeline: generate, modify workflows, rewrite prompts): skip to the session playbook
-  in `references/session-playbook.md` — cold-start servers, health check, then drive
-  generation via comfy-mcp. `scripts/Verify-Setup.ps1` tells setup state in seconds.
+  pipeline: generate, modify workflows, rewrite prompts): hand off to the
+  `comfyui-drive` skill (`.agents/comfyui-drive/SKILL.md`) — it owns cold-start,
+  generation, workflow editing, tuning. This skill stops at the setup boundary.
 
 Partial state mid-fresh-setup? `scripts/Verify-Setup.ps1` tells you exactly which
 stage is done — resume at the first FAIL, never redo PASSed stages (downloads resume
@@ -127,6 +127,8 @@ venv, port 8188), then: `search_templates` → `fetch_template` (H3 t2v) →
 `validate_workflow` → `run_workflow` → `fetch_outputs`. One video = the plumbing works.
 - Completion: output file fetched. Then hand the human the playbook promise:
   next day they just start the agent and ask in Hungarian for generations/edits.
+  All further driving (edits, prompts, tuning) belongs to the `comfyui-drive` skill —
+  do not duplicate its doctrine here.
 
 ## Ask-the-user gates (only these; never delegate them)
 
@@ -187,8 +189,6 @@ types prompts in the UI, workflows load from `workflows/`.
 - `references/hungarian-communication.md` — READ BEFORE ANY USER MESSAGE: language
   rules + exact Hungarian wording for every gate, progress state, and the final
   handover.
-- `references/session-playbook.md` — READ ON RETURNING SESSIONS (and before stage 8):
-  cold-start order, health checks, comfy-mcp usage patterns (workflow modify, prompt
-  rewrite + generate, looped video), output locations.
 - `references/comfy-mcp-docs.md` — committed copy of the official Comfy MCP doc
   (docs.comfy.org/agent-tools/mcp): tool list, client configs, FAQ, troubleshooting.
+- Generation-driving doctrine lives in the sibling skill: `.agents/comfyui-drive/`.

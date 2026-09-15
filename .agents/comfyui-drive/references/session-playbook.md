@@ -2,7 +2,7 @@
 
 Read on any "returning session" branch — human already has the pipeline; they want
 RESULTS now (generate, modify a workflow, improve a prompt). All human-facing text
-Hungarian (see hungarian-communication.md); the playbook here is agent-side.
+Hungarian (see `../comfyui-setup/references/hungarian-communication.md`); the playbook here is agent-side.
 
 ## Cold start (next day, machine rebooted, nothing running)
 
