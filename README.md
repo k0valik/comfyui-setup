@@ -1,5 +1,35 @@
 # ComfyUI telepítési útmutató — teljesen kezdőknek (magyarul)
 
+## A legröbb út: hagyd, hogy egy AI ügynök telepítse neked
+
+Ha van Codex vagy Google Antigravity (Gemini) programod, NEM kell végig menned ezen
+az útmutatón kézzel. Elég ennyi:
+
+1. Telepítsd az ügynököt:
+   - Google Antigravity: nyiss egy PowerShell ablakot (lásd 1. pont) és futtasd:
+     ```powershell
+     irm https://antigravity.google/cli/install.ps1 | iex
+     ```
+   - Codex (OpenAI): az aktuális hivatalos telepítési útmutatójuk szerint:
+     `https://developers.openai.com/codex/` (szükség lehet Node.js-re is).
+2. Töltsd le ezt a csomagot (a 6. pont szerint):
+   ```powershell
+   git clone https://github.com/k0valik/comfyui-setup.git comfyui-setup
+   cd comfyui-setup
+   ```
+   (Ehhez kell a Git — ha nincs, a 2. pontból.)
+3. Indítsd el az ügynököt ebben a mappában, és írd be neki, hogy:
+   **„telepíts fel nekem mindent légyszíves"**
+4. Az ügynök végigvisz mindenen: előfeltételek, ComfyUI, 86 GB videómodell,
+   SwarmUI, munkafolyamatok. Csak akkor kell közbeszállítanod, ha kérdezi
+   (pl. fiókgyártás, licencek elfogadása, néhány kattintás a böngészőben).
+
+Ha nincs agentod, vagy inkább kézzel csinálnád, akkor olvass tovább —
+az alábbi útmutató minden lépést leír. Az angol részletes változatok:
+`runbook.md` (alap) és `runbook_2.md` (videómodellek).
+
+---
+
 > Ez az útmutató onnan indul, hogy **semmid sincs telepítve**, és odáig visz, hogy
 > a böngésződben fut a ComfyUI kép- és videógeneráló felület.
 > Csak másolnod kell a bekeretezett parancsokat a PowerShellbe, és megvárni, amíg lefutnak.
