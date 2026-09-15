@@ -51,6 +51,19 @@ $dotnetOk = Ensure-Command ".NET SDK 8/9/10" {
   if ($sdks | Select-String -Pattern "^8\.|^9\.|^10\.") { $true } else { $false }
 } "Microsoft.DotNet.SDK.8" "https://dotnet.microsoft.com/en-us/download/dotnet/8.0"
 
+# 3b) Node.js + npm (agent CLI tooling: npx skills add, codex/antigravity ecosystems)
+if ((& node -v 2>$null) -and (& npm -v 2>$null)) {
+  Write-Host "[OK]   node/npm  ($(& node -v) / npm $(& npm -v))" -ForegroundColor Green
+} elseif (Get-Command choco -ErrorAction SilentlyContinue) {
+  Write-Host "[MISS] node - installing via choco (pinned 24.21.0)..." -ForegroundColor Yellow
+  & choco install nodejs --version="24.21.0" -y
+  Refresh-Path
+  if ((& node -v 2>$null) -and (& npm -v 2>$null)) { $script:InstalledSomething = $true; Write-Host "[OK]   node/npm (installed)" -ForegroundColor Green }
+  else { $script:Fatal += "node installed but not on PATH (reopen shell, re-run)." }
+} else {
+  $nodeOk = Ensure-Command "node/npm" { (& node -v 2>$null) -and (& npm -v 2>$null) } "OpenJS.NodeJS" "https://nodejs.org/ (24.x LTS)"
+}
+
 # 4) NVIDIA driver (report-only: install needs reboot, agent cannot click it)
 if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
   & nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader | Select-Object -First 1

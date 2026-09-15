@@ -56,16 +56,22 @@ Run: `powershell -ExecutionPolicy Bypass -File scripts\Install.ps1` (10–20 min
 - Completion: output ends with CUDA verify `True` + GPU name, no red errors.
 - Skips cleanly if already installed — safe to re-run.
 
-### Stage 3 — HuggingFace gate + model download (~86 GB)
+### Stage 3 — HuggingFace gate + model download (profile-aware)
 Gate: human does 3 browser things (HU wording in reference):
 1. create/enter HF account;
 2. open `https://huggingface.co/Lightricks/LTX-2.5` → click **Agree and Access**;
 3. create Read token at `https://huggingface.co/settings/tokens`, paste it to agent.
 Verify token: `Invoke-WebRequest -Headers @{Authorization="Bearer <tok>"} https://huggingface.co/api/models/Lightricks/LTX-2.5` → 200.
-Run: `$env:HF_TOKEN="<tok>"; powershell -ExecutionPolicy Bypass -File scripts\Download-Models.ps1` (15–60 min).
+Run: `$env:HF_TOKEN="<tok>"; powershell -ExecutionPolicy Bypass -File scripts\Download-Models.ps1`
+- **Profile default = `friend`** (~23GB: LTX GGUF Q3_K_M DiT + w4a8 encoder + VAEs +
+  upscaler + duration head; matches the curated civitai workflow). `-Profile full`
+  = the verified 16GB reference manifest (~86GB incl. H3) for machines with VRAM
+  headroom. `-WithW4A8DiT` adds the native w4a8 DiT (no GGUF pack needed).
+  Catalog of everything else: `MODELS.md` (repo root).
+- friend profile: also run `scripts\Install-NodePacks.ps1` (GGUF/rgthree/Easy-Use).
 - Interrupted → re-run same command (resumes). Expired/401 → token issue, re-gate.
-- Completion: script lists ~86 GB across `models/`; 12 safetensors present
-  (`scripts\Verify-Setup.ps1` models section all PASS).
+- Completion: script lists the profile's files; Verify-Setup models section PASSes
+  (profile-aware).
 
 ### Stage 4 — SwarmUI install + graft + first launch
 1. `powershell -ExecutionPolicy Bypass -File scripts\Install-Swarm.ps1`

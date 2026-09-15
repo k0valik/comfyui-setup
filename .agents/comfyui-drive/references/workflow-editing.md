@@ -31,6 +31,19 @@
 - **Output hash check** on suspicion: two renders with identical bytes from different
   prompts = the prompt never reached the model.
 
+## Encoder swap (friend profile - the FIRST edit on any LTX workflow)
+
+The curated `workflows/LTX2.5-downloaded-workflow.json` and the official LTX templates
+ship pointing at the int8 encoder (`gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot`,
+15.4GB). The friend profile downloads the w4a8 encoder
+(`gemma4-12b-ltx25-w4a8.safetensors`, 8.4GB) instead. So on the friend machine:
+- widget-edit every `CLIPLoader` node's filename to the w4a8 encoder present in
+  models/text_encoders (narrate: "a szovegertot lecsereltem a 8,4GB-os tomoritett
+  valtozatra - kevesebb VRAM, elvileg elhanyagolhato minosegveszteseg").
+- `validate_workflow` catches missing-model errors before queueing; trust it.
+- Swap on-demand both ways: slower machine / long renders -> w4a8; quality-critical
+  run with VRAM headroom -> int8 (download from MODELS.md catalog first).
+
 ## Node packs (installed into tmp/ComfyUI/custom_nodes via `comfy node install`)
 
 Current known set (keep updated as workflows demand):

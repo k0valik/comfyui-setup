@@ -23,10 +23,13 @@ defaults. Sources: `sources/ltx25-low-vram-guide.md` (LTX official),
 4. **Memory hygiene**: keep `cleanGpuUsed`/free-memory nodes after generation stages
    (VRAM stays dirty between renders on small cards — the reddit poster measured the
    slowdown themselves). Never remove them to "tidy" a graph.
-5. **Text encoder swap** (H3 experiment track, NOT default): the 32B nvfp4 TE (15.7GB)
-   can be replaced by community 4B/8B convrot quants (~int4 ≈ few GB). Works, big
-   speedup, slightly weaker prompt understanding. Only on explicit request; setup
-   discipline applies (official-ish repos, record in manifest).
+5. **Text encoder swap** (both models, on-demand):
+   - LTX: int8 `gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot` (15.4GB) <-> w4a8
+     `gemma4-12b-ltx25-w4a8` (8.4GB). Friend profile defaults to w4a8; swap DOWN if
+     renders drag, UP for quality-critical runs (MODELS.md catalog). One CLIPLoader
+     widget edit per swap.
+   - H3: the 32B nvfp4 TE (15.7GB) -> community 4B/8B convrot quants (few GB; see
+     sources + MODELS.md). Works, big speedup, slightly weaker prompt understanding.
 6. **Duration**: trade pixels for seconds (0.4MP at 3s ≈ 0.2MP at 5s in time).
    LTX on 32GB: 12s practical ceiling, 20s = hard OOM. Shorter clips are the economy.
 
@@ -43,9 +46,13 @@ defaults. Sources: `sources/ltx25-low-vram-guide.md` (LTX official),
 
 - **H3 via Kijai experimental weights + 4B/8B TE**: the 8GB proof setup. Different
   files than our Comfy-Org pack; only adopt deliberately (setup discipline, separate
-  workflow JSONs, record which workflow needs which files).
-- **LTX GGUF DiT (Q3_K_M/Q4_K_S)**: friend-profile default candidate; requires
-  ComfyUI-GGUF pack; file lives in `models/diffusion_models/` like any DiT.
+  workflow JSONs, record which workflow needs which files). Also H3 w4a8 native:
+  `MiniMax-H3-REF2VA-w4a8.safetensors` 24.5GB in the Rebels repo (MODELS.md).
+- **LTX GGUF DiT (Q3_K_M/Q4_K_S)**: friend-profile default; requires ComfyUI-GGUF
+  pack; file lives in `models/diffusion_models/` like any DiT. Native w4a8 DiT is the
+  no-extra-pack alternative (`-WithW4A8DiT` on Download-Models.ps1).
 - **Junction trick for parallel installs**: testing a new model version is done in a
   sandbox comfy on another port with model folders shared via NTFS junction — never
   upgrade the working install to evaluate something.
+
+Full downloadable catalog with links/sizes: `MODELS.md` (repo root).

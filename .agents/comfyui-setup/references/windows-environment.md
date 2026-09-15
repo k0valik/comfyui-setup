@@ -37,11 +37,10 @@
   section per backend, `settings:` keys must match Swarm's ComfyUISelfStartSettings.
   Real verified file used `ExtraArgs: \x` (literal). Write it ONLY before first
   SwarmUI launch (or stop Swarm first); verify with Verify-Setup "swarm graft" row.
-- Model manifest (12 files; see `runbook_2.md` §7 for full table): H3 int8 DiT 21GB,
-  H3 nvfp4 TE 15.7GB, LTX int8 distilled DiT 21.5GB, LTX int8 TE 15.4GB, 4 VAEs,
-  2 H3 turbo LoRAs, LTX spatial upscaler, LTX duration head. Only official repos
-  (Comfy-Org/MiniMax-H3, lightx2v/Minimax-h3-Turbo, Lightricks/LTX-2.5 — gated).
-  Never substitute GGUF/community forks; never download bf16 monoliths.
+- Model profiles (two committed in `scripts/Download-Models.ps1`): `friend` = 8GB LTX
+  stack ~23GB (GGUF Q3_K_M DiT + w4a8 Gemma4 encoder + VAEs + upscaler + duration
+  head); `full` = 16GB reference manifest ~86GB incl. H3 (runbook_2 sec.7).
+  Verify-Setup is profile-aware. Downloadable extras catalog: `MODELS.md` (repo root).
 - ComfyUI-Manager is a pip package (installed via `manager_requirements.txt`), NOT a
   custom_nodes clone. ComfyUI itself is cloned to `tmp/ComfyUI` (never into
   custom_nodes). SwarmUI cloned to `tmp/SwarmUI` (never into ComfyUI/custom_nodes).

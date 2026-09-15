@@ -135,7 +135,28 @@ gated LTX repo; re-runnable/resumable).
    608x352-ish, turbo 4/8-step or LTX distilled 8-step): pending — first real
    text→image→video→upscale run is the next milestone (user supplies example workflows).
 
-## 7. Exact file manifest (verified 2026-09-12)
+## 7. Exact file manifest — TWO PROFILES (verified 2026-09-12/16)
+
+`scripts/Download-Models.ps1 -Profile` picks the manifest; `Verify-Setup.ps1` is
+profile-aware. Downloadable extras (GGUF ladder, w4a8 collection, image models,
+H3 experiment tracks): see `MODELS.md` (repo root).
+
+### Profile `friend` (default, 8GB VRAM target, ~23 GB)
+
+| ComfyUI folder | File | Size | Source repo |
+|---|---|---|---|
+| diffusion_models | LTX-2.5-Distilled-Q3_K_M.gguf | 11.5 GB | realrebelai/LTX-2.5_GGUFs (matches curated workflow's LoaderGGUF) |
+| text_encoders | gemma4-12b-ltx25-w4a8.safetensors | 8.4 GB | realrebelai/Rebels_w4a8s (needs CLIPLoader widget swap — drive skill narrates) |
+| vae | ltx-2.5-video-vae-conv-bf16.safetensors | 1.5 GB | Lightricks/LTX-2.5 (gated) |
+| vae | ltx-2.5-audio-vae-bf16.safetensors | 0.4 GB | Lightricks/LTX-2.5 (gated) |
+| latent_upscale_models | ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors | 1.0 GB | Lightricks/LTX-2.5 (gated) |
+| model_patches | ltx-2.5-duration-head-bf16.safetensors | ~0 GB | Lightricks/LTX-2.5 (gated) |
+
+Requires node packs: rgthree, ComfyUI-Easy-Use, ComfyUI-GGUF (`scripts/Install-NodePacks.ps1`).
+Optional `-WithW4A8DiT`: + `LTX-2.5-Distilled-w4a8.safetensors` 12.5GB (native stock
+loader, no GGUF pack needed). H3 on 8GB = experiment track (drive skill), not here.
+
+### Profile `full` (16GB+ author reference, ~86 GB, verified)
 
 | ComfyUI folder | File | Size | Source repo |
 |---|---|---|---|

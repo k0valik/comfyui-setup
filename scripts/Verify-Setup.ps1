@@ -30,14 +30,21 @@ if (Test-Path $venvPy) {
 Check "extra_model_paths.yaml" (Test-Path (Join-Path $RepoRoot "tmp/ComfyUI/extra_model_paths.yaml")) ""
 
 Write-Host "=== models ===" -ForegroundColor Cyan
-$models = Get-ChildItem -Recurse -File -Filter "*.safetensors" (Join-Path $RepoRoot "models") -ErrorAction SilentlyContinue
+$models = Get-ChildItem -Recurse -File (Join-Path $RepoRoot "models") -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in ".safetensors",".gguf" }
 $gb = [math]::Round((($models | Measure-Object Length -Sum).Sum / 1e9), 1)
-Check "12 expected model files" (($models | Measure-Object).Count -ge 12) ("count=$($models.Count) total=${gb}GB")
-foreach ($must in @("diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
-                    "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
-                    "diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
-                    "text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors")) {
-  Check ("model " + (Split-Path $must -Leaf)) (Test-Path (Join-Path $RepoRoot "models/$must")) ""
+$names = $models.Name
+# profile detection: friend = GGUF DiT + w4a8 encoder; full = int8 DiT + nvfp4 TE
+$friendCore = @("LTX-2.5-Distilled-Q3_K_M.gguf","gemma4-12b-ltx25-w4a8.safetensors","ltx-2.5-video-vae-conv-bf16.safetensors")
+$fullCore = @("minimax_h3_fl2va_pruned_int8_convrot.safetensors","qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors","ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors","gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors")
+$isFriend = ($friendCore | Where-Object { $names -notcontains $_ }).Count -eq 0
+$isFull = ($fullCore | Where-Object { $names -notcontains $_ }).Count -eq 0
+$profileLabel = if ($isFriend) { "friend (8GB LTX stack, >=5 files expected)" } elseif ($isFull) { "full (author manifest, >=12 files expected)" } else { "none detected" }
+Check "profile detected" ($isFriend -or $isFull) $profileLabel
+$minCount = if ($isFriend) { 5 } else { 12 }
+Check "model file count (min $minCount)" (($models | Measure-Object).Count -ge $minCount) ("count=$($models.Count) total=${gb}GB")
+$critical = if ($isFriend) { $friendCore } else { $fullCore }
+foreach ($must in $critical) {
+  Check ("model " + $must) ($names -contains $must) ""
 }
 
 Write-Host "=== swarm graft ===" -ForegroundColor Cyan

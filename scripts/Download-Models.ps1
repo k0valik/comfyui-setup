@@ -1,19 +1,38 @@
 #Requires -Version 5.1
 <#
-  Download the video-model stack (MiniMax H3 + LTX-2.5, most-downloaded official
-  repos, 8GB-friendly int8/nvfp4 quants) into repo-root/models/ (git-ignored),
-  then wire it up via tmp/ComfyUI/extra_model_paths.yaml.
+  Download video-model files into repo-root models/ (git-ignored), then wire up
+  tmp/ComfyUI/extra_model_paths.yaml.
 
-  Run from the repo root:  powershell -ExecutionPolicy Bypass -File scripts/Download-Models.ps1
-  Needs: tmp/ComfyUI/venv from scripts/Install.ps1. No hf CLI needed (uses the
-  venv's huggingface_hub). Gated repos (Lightricks/LTX-2.5) need access first:
-  open https://huggingface.co/Lightricks/LTX-2.5 in a browser, click
-  "Agree and Access", then set $env:HF_TOKEN to a token from
-  https://huggingface.co/settings/tokens before running this script.
-  Downloads are resumable - just re-run if interrupted. Total ~86 GB.
+  TWO PROFILES:
+    -Profile friend  (DEFAULT - 8GB VRAM target, ~23 GB total)
+        GGUF DiT:            LTX-2.5-Distilled-Q3_K_M.gguf          11.5 GB (matches
+                             the curated civitai workflow's LoaderGGUF exactly)
+        Text encoder (w4a8): gemma4-12b-ltx25-w4a8.safetensors      8.4  GB (needs a
+                             one-widget CLIPLoader swap in workflows - the agent
+                             narrates it; stock nodes, no extra packs)
+        + LTX VAEs + spatial upscaler + duration head (Lightricks official)
+        Optional switch -WithW4A8DiT: adds LTX-2.5-Distilled-w4a8.safetensors (12.5 GB,
+        stock "Load Diffusion Model" node, no GGUF pack needed).
+    -Profile full    (16GB+ author reference manifest, ~86 GB, the verified setup)
+        H3 int8 DiT + nvfp4 TE + LTX int8 distilled DiT + int8 TE + 4 VAEs + 2 LoRAs
+        + upscaler + duration head.
+
+  H3 on 8GB is an EXPERIMENT TRACK (drive skill) - not part of either default profile.
+
+  Usage:
+    powershell -ExecutionPolicy Bypass -File scripts/Download-Models.ps1 [-Profile friend|full] [-WithW4A8DiT]
+  Needs: tmp/ComfyUI/venv (Install.ps1). $env:HF_TOKEN must hold a Read token from
+  https://huggingface.co/settings/tokens AND the human must have clicked "Agree and
+  Access" on https://huggingface.co/Lightricks/LTX-2.5 (gated repo). Realrebelai
+  repos are open. Downloads resume - re-run if interrupted.
 #>
+param(
+  [string]$Profile = "friend",
+  [switch]$WithW4A8DiT,
+  [string]$RepoRoot = ""
+)
 $ErrorActionPreference = "Stop"
-$RepoRoot = Split-Path -Parent $PSScriptRoot
+if (-not $RepoRoot) { $RepoRoot = Split-Path -Parent $PSScriptRoot }
 Set-Location $RepoRoot
 
 $VenvPy = "tmp/ComfyUI/venv/Scripts/python.exe"
@@ -27,31 +46,57 @@ function Get-RepoFiles($RepoId, $Patterns) {
   & $VenvPy -c $code
 }
 
-# --- MiniMax H3 (official ComfyUI repack; template video_minimax_h3_t2v needs exactly these) ---
-Get-RepoFiles "Comfy-Org/MiniMax-H3" @(
-  "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
-  "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
-  "vae/minimax_h3_video_vae_fp16.safetensors",
-  "vae/minimax_h3_audio_vae_fp32.safetensors",
-  "loras/minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors"
-)
-# 8-step turbo LoRA lives at repo root of lightx2v/Minimax-h3-Turbo (template default) -> move into loras/
-Get-RepoFiles "lightx2v/Minimax-h3-Turbo" @(
-  "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors"
-)
-if (Test-Path "models/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors") {
-  Move-Item -Force "models/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors" "models/loras/"
+if ($Profile -eq "friend") {
+  # --- friend profile: 8GB-VRAM LTX stack (matches curated civitai workflow) ---
+  Get-RepoFiles "realrebelai/LTX-2.5_GGUFs" @(
+    "LTX-2.5-Distilled-Q3_K_M.gguf"
+  )
+  Get-RepoFiles "realrebelai/Rebels_w4a8s" @(
+    "LTX/ENCODERS/gemma4-12b-ltx25-w4a8.safetensors"
+  )
+  Get-RepoFiles "Lightricks/LTX-2.5" @(
+    "vae/ltx-2.5-video-vae-conv-bf16.safetensors",
+    "vae/ltx-2.5-audio-vae-bf16.safetensors",
+    "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+    "model_patches/ltx-2.5-duration-head-bf16.safetensors"
+  )
+  if ($WithW4A8DiT) {
+    Get-RepoFiles "realrebelai/Rebels_w4a8s" @(
+      "LTX/LTX-2.5-Distilled-w4a8.safetensors"
+    )
+  }
+  # Node packs required by the curated workflow (GGUF loader, rgthree, Easy-Use):
+  Write-Host "`nNOTE: friend profile needs node packs:" -ForegroundColor Yellow
+  Write-Host "  powershell -ExecutionPolicy Bypass -File scripts/Install-NodePacks.ps1" -ForegroundColor Yellow
 }
-
-# --- LTX-2.5 (official; distilled + comfy-int8, conv VAE, spatial upscaler for multi-stage) ---
-Get-RepoFiles "Lightricks/LTX-2.5" @(
-  "diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
-  "text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
-  "vae/ltx-2.5-video-vae-conv-bf16.safetensors",
-  "vae/ltx-2.5-audio-vae-bf16.safetensors",
-  "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
-  "model_patches/ltx-2.5-duration-head-bf16.safetensors"
-)
+elseif ($Profile -eq "full") {
+  # --- full profile: verified 16GB reference manifest (runbook_2 sec.7) ---
+  Get-RepoFiles "Comfy-Org/MiniMax-H3" @(
+    "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+    "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+    "vae/minimax_h3_video_vae_fp16.safetensors",
+    "vae/minimax_h3_audio_vae_fp32.safetensors",
+    "loras/minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors"
+  )
+  Get-RepoFiles "lightx2v/Minimax-h3-Turbo" @(
+    "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors"
+  )
+  if (Test-Path "models/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors") {
+    Move-Item -Force "models/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors" "models/loras/"
+  }
+  Get-RepoFiles "Lightricks/LTX-2.5" @(
+    "diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+    "text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+    "vae/ltx-2.5-video-vae-conv-bf16.safetensors",
+    "vae/ltx-2.5-audio-vae-bf16.safetensors",
+    "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+    "model_patches/ltx-2.5-duration-head-bf16.safetensors"
+  )
+}
+else {
+  Write-Error "Unknown profile '$Profile' (use: friend | full)."
+  exit 1
+}
 
 # --- Wire into ComfyUI (machine-local absolute base_path, regenerated per machine) ---
 $base = ($RepoRoot -replace "\\", "/")
@@ -67,6 +112,6 @@ comfyui_video_models:
     model_patches: models/model_patches/
 "@ | Out-File -Encoding utf8 "tmp/ComfyUI/extra_model_paths.yaml"
 
-Write-Host "`n=== models/ ===" -ForegroundColor Cyan
-Get-ChildItem -Recurse -File "models" | ForEach-Object { "{0,8:N1} GB  {1}" -f ($_.Length / 1e9), $_.FullName.Substring($RepoRoot.Length + 1) }
+Write-Host "`n=== models/ (profile: $Profile) ===" -ForegroundColor Cyan
+Get-ChildItem -Recurse -File "models" -Include "*.safetensors","*.gguf" | ForEach-Object { "{0,8:N1} GB  {1}" -f ($_.Length / 1e9), $_.FullName.Substring($RepoRoot.Length + 1) }
 Write-Host "`nDone. Restart ComfyUI (scripts/Start.ps1) so it picks up the new paths." -ForegroundColor Green
