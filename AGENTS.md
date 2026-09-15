@@ -14,6 +14,12 @@ Operator reality (2026-09-12, supersedes dev-only assumptions for the END USER):
 - The friend installs an agent TUI (Codex or Google Antigravity) and drives setup conversationally. Entry ritual: clone this repo, install their agent, start it in the repo, and say: "telepíts fel nekem mindent légyszíves". The agent then executes the whole setup via the project skill at .agents/comfyui-setup/ (Windows PowerShell driver, stages, gates, verification). Update that skill whenever scripts or flows change.
 - Reproducible end state: verified scripts run top-to-bottom on a fresh Windows machine; skill ends when the template workflows in workflows/ run a first successful generation.
 
+Agent tooling layer (stage 7 of the skill, committed 2026-09-12):
+- Agent installs comfy-cli (>=1.14) + comfy-mcp into a dedicated venv `tmp/agent-tools/` (scripts/Install-AgentTools.ps1) — NEVER inside tmp/ComfyUI/venv (that venv is comfy's runtime) and NEVER via `comfy install` (would clone a second comfy; `comfy set-default tmp/ComfyUI` points the CLI at the existing checkout).
+- Agent registers the comfy-mcp stdio server with its own client (codex: `codex mcp add comfy-mcp --env COMFY_BIN=<path> -- <path to comfy-mcp.exe>` or ~/.codex/config.toml; gemini/antigravity: mcpServers in settings). Absolute paths only — MCP clients launch servers with their own env, no PATH.
+- `comfy skills install` (bundled in comfy-cli) writes the comfy skills for the client/AGENTS.md. The Comfy-Org/comfy-skills repo's skills/ folder is the deprecated legacy set — do not install from it; its claude-code plugin (comfy-cloud MCP) is the PAID cloud connection, separate from our local setup.
+- Source of truth for the MCP layer: .agents/comfyui-setup/references/comfy-mcp-docs.md (committed copy of docs.comfy.org/agent-tools/mcp). Returning-session usage patterns: references/session-playbook.md.
+
 Reproducibility contract (must always hold):
 - This is a reproducible example repo. Someone cloning it on Windows with similar specs (RTX 20-series+, incl. lower VRAM 8-12GB) must be able to follow runbook.md top-to-bottom on a fresh machine.
 - Audience is non-technical: prefer half-automation via committed scripts/ (Install.ps1, Start.ps1/.bat) + copy-paste PowerShell blocks. No admin rights, no Visual Studio / build essentials may be assumed — everything must install from prebuilt wheels.

@@ -6,12 +6,16 @@ Ha van Codex vagy Google Antigravity (Gemini) programod, NEM kell végig menned 
 az útmutatón kézzel. Elég ennyi:
 
 1. Telepítsd az ügynököt:
-   - Google Antigravity: nyiss egy PowerShell ablakot (lásd 1. pont) és futtasd:
+   - **Codex (OpenAI)** — hivatalos telepítő, egy sor:
+     ```powershell
+     powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"
+     ```
+     (forrás: `https://learn.chatgpt.com/docs/codex/cli#getting-started`)
+   - **Google Antigravity (Gemini)**:
      ```powershell
      irm https://antigravity.google/cli/install.ps1 | iex
      ```
-   - Codex (OpenAI): az aktuális hivatalos telepítési útmutatójuk szerint:
-     `https://developers.openai.com/codex/` (szükség lehet Node.js-re is).
+   Telepítés után csukd be és nyiss újra egy PowerShell ablakot.
 2. Töltsd le ezt a csomagot (a 6. pont szerint):
    ```powershell
    git clone https://github.com/k0valik/comfyui-setup.git comfyui-setup
@@ -21,7 +25,11 @@ az útmutatón kézzel. Elég ennyi:
 3. Indítsd el az ügynököt ebben a mappában, és írd be neki, hogy:
    **„telepíts fel nekem mindent légyszíves"**
 4. Az ügynök végigvisz mindenen: előfeltételek, ComfyUI, 86 GB videómodell,
-   SwarmUI, munkafolyamatok. Csak akkor kell közbeszállítanod, ha kérdezi
+   SwarmUI, munkafolyamatok — és saját magának is feltelepíti az eszközeit
+   (comfy-cli + Comfy MCP), hogy később is tudja vezérelni a gépedet:
+   munkafolyamatot módosítani, promptot átírni, képet/videót generálni,
+   ha csak beírod neki a következő napokban is.
+   Csak akkor kell közbeszállítanod, ha kérdezi
    (pl. fiókgyártás, licencek elfogadása, néhány kattintás a böngészőben).
 
 Ha nincs agentod, vagy inkább kézzel csinálnád, akkor olvass tovább —

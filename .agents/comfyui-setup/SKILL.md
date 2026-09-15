@@ -26,9 +26,17 @@ already on the machine".
 
 ## Branch
 
-Single mode: fresh end-to-end setup. Partial state? `scripts/Verify-Setup.ps1` tells
-you exactly which stage is done — resume at the first FAIL, never redo PASSed stages
-(downloads resume in place; installs skip if present).
+Two modes — decide first, wrong mode wastes the session:
+- **Fresh setup** (no `tmp/ComfyUI/venv` or Verify-Setup has setup FAILs): run all
+  stages 1→7 in order. Resume at first FAIL.
+- **Returning session** (setup was done on a previous day; human wants to USE the
+  pipeline: generate, modify workflows, rewrite prompts): skip to the session playbook
+  in `references/session-playbook.md` — cold-start servers, health check, then drive
+  generation via comfy-mcp. `scripts/Verify-Setup.ps1` tells setup state in seconds.
+
+Partial state mid-fresh-setup? `scripts/Verify-Setup.ps1` tells you exactly which
+stage is done — resume at the first FAIL, never redo PASSed stages (downloads resume
+in place; installs skip if present).
 
 ## Execution workflow
 
@@ -85,11 +93,40 @@ Gate: human loads one in SwarmUI (`Comfy Workflow Editor` tab → open JSON →
   lands in `tmp/SwarmUI/Data` output or `tmp/ComfyUI/output`), no red backend errors.
 
 ### Stage 6 — Done
-- `scripts\Verify-Setup.ps1` → `RESULT: all critical checks PASS`.
+- `scripts/Verify-Setup.ps1` → `RESULT: all critical checks PASS`.
 - Report end state to human in Hungarian (reference: final handover text):
   how to start (`Start-Swarm.ps1` / `Start.bat`), stop (Ctrl+C), where outputs land.
 - Capture durably: if torch/python/ComfyUI versions differ from runbook's
   "Reference machine" block, update `runbook.md` + commit + push.
+
+### Stage 7 — Agent tooling (self-provisioning; enables stages 8+)
+The agent installs ITS OWN tools so future sessions can drive comfy programmatically:
+1. `powershell -ExecutionPolicy Bypass -File scripts\Install-AgentTools.ps1`
+   — creates `tmp/agent-tools` venv (comfy-cli >= 1.14 + comfy-mcp), sets comfy-cli
+   workspace to `tmp/ComfyUI` (existing checkout — NEVER `comfy install` a second
+   comfy). Completion: prints `COMFY_BIN` and `MCP cmd` paths, both files exist.
+2. Install bundled comfy skills into the client: run
+   `tmp\agent-tools\Scripts\comfy.exe skills install` (writes skills for Claude Code,
+   Cursor, and AGENTS.md-aware tools). Completion: skill files appear / command exits 0.
+3. Register the MCP server with the running client (stdio, absolute paths — MCP
+   clients launch servers with their own env, so no PATH dependence):
+   - Codex: `codex mcp add comfy-mcp --env COMFY_BIN=<COMFY_BIN> -- <MCP cmd>`
+     (verify syntax: `codex mcp add --help`; or edit `~/.codex/config.toml`:
+     `[mcp_servers.comfy-mcp]` with `command` + `env`).
+   - Gemini/Antigravity: check `--help` for its `mcp add` (gemini-compatible:
+     settings.json `mcpServers` with `command` + `env`).
+   - Any other client: same contract — command = comfy-mcp.exe, env COMFY_BIN = comfy.exe.
+   Official reference (committed copy): `references/comfy-mcp-docs.md`.
+4. Restart the agent client / start a new session — MCP servers load at session start.
+- Completion: client lists a `comfy-mcp` server; calling `server_info()` returns the
+  local workspace (after a comfy is running — see playbook).
+
+### Stage 8 — Prove the loop (one MCP-driven generation)
+Start comfy via MCP (`launch_comfyui` tool or `comfy launch` in tmp/ComfyUI; uses our
+venv, port 8188), then: `search_templates` → `fetch_template` (H3 t2v) →
+`validate_workflow` → `run_workflow` → `fetch_outputs`. One video = the plumbing works.
+- Completion: output file fetched. Then hand the human the playbook promise:
+  next day they just start the agent and ask in Hungarian for generations/edits.
 
 ## Ask-the-user gates (only these; never delegate them)
 
@@ -138,6 +175,8 @@ types prompts in the UI, workflows load from `workflows/`.
   (needs `$env:HF_TOKEN` for LTX).
 - `scripts/Install-Swarm.ps1` — clone + build SwarmUI.
 - `scripts/Set-SwarmGraft.ps1` — pre-bakes Backends.fds graft (run before first launch).
+- `scripts/Install-AgentTools.ps1` — tools venv: comfy-cli + comfy-mcp, workspace =
+  tmp/ComfyUI; prints COMFY_BIN + MCP cmd for MCP registration.
 - `scripts/Start-Swarm.ps1` / `Start.ps1` / `Start.bat` — launchers.
 - `scripts/Verify-Setup.ps1` — full PASS/FAIL status report; resume pointer.
 
@@ -148,3 +187,8 @@ types prompts in the UI, workflows load from `workflows/`.
 - `references/hungarian-communication.md` — READ BEFORE ANY USER MESSAGE: language
   rules + exact Hungarian wording for every gate, progress state, and the final
   handover.
+- `references/session-playbook.md` — READ ON RETURNING SESSIONS (and before stage 8):
+  cold-start order, health checks, comfy-mcp usage patterns (workflow modify, prompt
+  rewrite + generate, looped video), output locations.
+- `references/comfy-mcp-docs.md` — committed copy of the official Comfy MCP doc
+  (docs.comfy.org/agent-tools/mcp): tool list, client configs, FAQ, troubleshooting.
