@@ -1,5 +1,10 @@
 # ComfyUI telepítési útmutató — teljesen kezdőknek (magyarul)
 
+## Először nyisd meg ezt:
+
+- https://huggingface.co/spaces/akhaliq/LTX-2.5-workflow
+- teszteld le, hogy milyen alapból amit kidob. Ez nem lesz optimalizálva, de egy átlagos gyors workflow-t meg tudsz nézni, hogy mit is csinál, anélkül, hogy bármit letöltöttél volna.
+
 ## A legrövidebb út - csinálhatsz egy mixet is
 
 - Azt javaslom töltsd le a ChatGPT Codex-et meg az Antigravity-t, aztán irányítsd rá őket erre a repora, de abban a mappában kell megnyitnod velük a beszélgetést ahol ez az egész létezni fog.
