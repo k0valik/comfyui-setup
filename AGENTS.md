@@ -7,6 +7,8 @@ The repository contains a runbook.md which shall be a living document about sett
 
 Use powershell where required.
 
+Assume, that you are running on "friend's machine", anywhere where you see that reference. Confirm once per session (nvidia-smi should show as 3060 TI - 8GB vram)
+
 Operator reality:
 - The end user (friend) runs Windows ONLY: PowerShell / Windows Terminal, no WSL, no dev tools - unless installed already.
 - The friend is non-technical and does NOT know English (partial at best). ALL friend-facing text (README, runbook instructions meant for them, agent messages) must be Hungarian. Technical references, commands, file names, UI labels stay English.
