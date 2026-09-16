@@ -3,7 +3,7 @@ REM ============================================================================
 REM  initial_setup.bat - ONE-FILE WINDOWS BOOTSTRAP for the comfyui-setup repo.
 REM  Double-click this (or run from cmd). Installs in order:
 REM    [1] Git  [2] Python 3.13  [3] .NET SDK  [4] Chocolatey  [5] Node.js 24.21.0
-REM    [6] agent CLI (Codex or Google Antigravity) - your choice
+REM    [6] agent CLIs (Codex AND Google Antigravity - both, so you can switch
 REM  Then verifies everything via scripts\Preflight.ps1.
 REM
 REM  CAVEATS (interactive bits the human handles):
@@ -87,21 +87,17 @@ if not errorlevel 1 (
 )
 
 echo.
-echo === [6/6] Agent CLI ===
-echo   [1] Codex (OpenAI)
-echo   [2] Antigravity (Google)
-echo   [3] Skip - already installed / decide later
-choice /c 123 /n /m "Your choice: "
-if errorlevel 3 goto :verify
-if errorlevel 2 goto :antigravity
+echo === [6/6] Agent CLIs ^(BOTH Codex and Antigravity^) ===
+echo Both are installed on purpose: free quotas run out fast - when one says
+echo its quota is used up or errors, continue in the other one, same folder.
+echo   [Y] Install both  /  [S] Skip - already installed
+choice /c YS /n /m "Your choice [Y/S]: "
+if errorlevel 2 goto :verify
 echo Installing Codex...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://chatgpt.com/codex/install.ps1 | iex"
-echo (if the codex command is missing afterwards, reopen the terminal^)
-goto :verify
-:antigravity
 echo Installing Antigravity...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://antigravity.google/cli/install.ps1 | iex"
-echo (if the antigravity command is missing afterwards, reopen the terminal^)
+echo (if a command is missing afterwards, reopen the terminal - PATH refresh^)
 
 :verify
 echo.
@@ -120,9 +116,10 @@ if "%PFERR%"=="2" (
 echo.
 echo NEXT STEPS:
 echo   1. NVIDIA driver missing? https://www.nvidia.com/drivers/ then REBOOT.
-echo   2. Start your agent ^(codex / antigravity^) IN THIS FOLDER.
+echo   2. Start your agent ^(codex or antigravity^) IN THIS FOLDER.
+echo      If one runs out of quota / errors, switch to the other one.
 echo   3. Type:  telepits fel nekem mindent legyszives
-echo      ^(the agent takes over: ComfyUI + 86GB models + SwarmUI + workflows^)
+      ^(the agent takes over: ComfyUI + models + SwarmUI + workflows^)
 echo.
 pause
 exit /b 0

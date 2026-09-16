@@ -1,40 +1,52 @@
 # ComfyUI telepítési útmutató — teljesen kezdőknek (magyarul)
 
-## A legröbb út: hagyd, hogy egy AI ügynök telepítse neked
+## A legrövidebb út
 
-Ha van Codex vagy Google Antigravity (Gemini) programod, NEM kell végig menned ezen
-az útmutatón kézzel. Elég ennyi:
+**A) Terminál + ZIP (egy parancs):**
 
-1. Telepítsd az ügynököt:
-   - **Codex (OpenAI)** — hivatalos telepítő, egy sor:
-     ```powershell
-     powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"
-     ```
-     (forrás: `https://learn.chatgpt.com/docs/codex/cli#getting-started`)
-   - **Google Antigravity (Gemini)**:
-     ```powershell
-     irm https://antigravity.google/cli/install.ps1 | iex
-     ```
-   Telepítés után csukd be és nyiss újra egy PowerShell ablakot.
-2. Töltsd le ezt a csomagot (a 6. pont szerint):
-   ```powershell
-   git clone https://github.com/k0valik/comfyui-setup.git comfyui-setup
-   cd comfyui-setup
-   ```
-   (Ehhez kell a Git — ha nincs, a 2. pontból.)
-3. Indítsd el az ügynököt ebben a mappában, és írd be neki, hogy:
-   **„telepíts fel nekem mindent légyszíves"**
-4. Az ügynök végigvisz mindenen: előfeltételek, ComfyUI, 86 GB videómodell,
-   SwarmUI, munkafolyamatok — és saját magának is feltelepíti az eszközeit
-   (comfy-cli + Comfy MCP), hogy később is tudja vezérelni a gépedet:
-   munkafolyamatot módosítani, promptot átírni, képet/videót generálni,
-   ha csak beírod neki a következő napokban is.
-   Csak akkor kell közbeszállítanod, ha kérdezi
-   (pl. fiókgyártás, licencek elfogadása, néhány kattintás a böngészőben).
+Görgess fel a GitHub oldal tetejére, kattints a zöld **„Code"** gombra, majd a
+**„Download ZIP"** gombra. Mentsd el a ZIP-et olyan helyre, ahol van elég szabad
+tárhely (kb. 100 GB). Csomagold ki, lépj bele a mappába, nyomj egy **Shift + jobb
+egérgombot egy üres helyre**, válaszd az **„Open PowerShell window here"**
+menüpontot, és írd be:
 
-Ha nincs agentod, vagy inkább kézzel csinálnád, akkor olvass tovább —
-az alábbi útmutató minden lépést leír. Az angol részletes változatok:
-`runbook.md` (alap) és `runbook_2.md` (videómodellek).
+```powershell
+.\initial_setup.bat
+```
+
+Ez feltelepít mindent, ami kell: Git, Python, .NET, Node.js — plusz **mindkét**
+parancssori ügynököt (**Codex** és **Google Antigravity**). Direkt kell mindkettő:
+az ingyenes keret gyorsan elfogy, és ha az egyik azt írja, hogy elfogyott a kvótád
+vagy hibát ad, egyszerűen megnyitod a másikat ugyanabban a mappában, és ott
+folytatod. Ha kérdi, engedélyezd az adminisztrátori hozzáférést (UAC: Igen).
+Utána indítsd el az egyik ügynököt a mappában (terminálba: `codex`), és írd
+be neki: **„telepíts fel nekem mindent légyszíves"** — ezután ő visz végig mindenen
+(ComfyUI, modellek, SwarmUI, munkafolyamatok).
+
+**B) Asztali alkalmazással (ChatGPT app / Google Antigravity app):**
+
+- ChatGPT asztali alkalmazás: `https://learn.chatgpt.com/docs/app` — töltsd le és
+  telepítsd.
+- Google Antigravity: `https://antigravity.google/` — töltsd le és telepítsd.
+
+Az appokat telepítés után **indítsd el, és jelentkezz be** a ChatGPT / Google
+fiókoddal. Ezután másold be nekik a repó linkjét:
+`https://github.com/k0valik/comfyui-setup` — az ügynök letölti magának a repót
+(szükség szerint telepít Git-et is), és onnantól ugyanaz történik, mint az A)
+útvonalon: írd be neki, hogy **„telepíts fel nekem mindent légyszíves"**.
+
+Az asztali appok is ismerik a skill-eket és az MCP-t — az ügynök be tudja magának
+állítani, de az appot utána **újra kell indítani**, hogy betöltse őket.
+
+**Megjegyzés:** ha a B) útvonalat választod, a parancssori ügynökök telepítése nem
+szükséges — az appok maguk az ügynökök. De itt is igaz: **érdemes mindkét appot
+fent tartani** (ChatGPT app + Antigravity), mert ha az egyikben elfogy a keret vagy
+hibázik, a másikban folytathatod ugyanott. Minden más telepítés ugyanúgy kell
+(a skill ezt tudja, és eljár ennek megfelelően).
+
+Ha inkább kézzel csinálnád, akkor olvass tovább — az alábbi útmutató minden lépést
+leír. Az angol részletes változatok: `runbook.md` (alap) és `runbook_2.md`
+(videómodellek).
 
 ---
 
@@ -51,10 +63,12 @@ Ez a `runbook.md` magyar, bőbeszédű változata. A technikai részletek angol 
 ## 0. Amire szükséged lesz
 
 - Egy Windows 10 vagy Windows 11-es számítógép (NVIDIA videókártyával — pl. RTX 3060 vagy újabb).
-- Internetkapcsolat (a letöltések nagyok: összesen kb. 90 GB).
-- Kb. 100 GB szabad hely a lemezen.
+- Internetkapcsolat (a letöltések nagyok: kb. 25–90 GB a választott profiltól függően).
+- Kb. 100 GB szabad hely a lemezen (a teljes csomaghoz; a kisebb profilhoz ~40 GB is elég).
 - Kb. 1–2 óra idő (nagy része várakozás, amíg tölt le a gép).
-- Semmilyen programozói tudás nem kell. Rendszergazdai jog sem kell.
+- Semmilyen programozói tudás nem kell. Rendszergazdai jóváhagyást (UAC: „Igen" gomb)
+  csak egyszer kérhet a gép, amikor az `initial_setup.bat` a segédprogramokat telepíti —
+  ez normális, nyugodtan engedélyezd.
 
 ---
 
@@ -69,12 +83,15 @@ Ez a `runbook.md` magyar, bőbeszédű változata. A technikai részletek angol 
 > Fontos szokás: **minden telepítés után csukd be ezt az ablakot, és nyiss egy újat**
 > (ugyanígy: Start → PowerShell). Különben a gép nem látja az újonnan telepített programokat.
 
-Másolás beillesztés az ablakba: jelöld ki a parancsot itt, `Ctrl+C`, majd a PowerShell
+Másolás–beillesztés az ablakba: jelöld ki a parancsot itt, `Ctrl+C`, majd a PowerShell
 ablakban kattints bele és nyomj `Ctrl+V`, végül `Enter`.
 
 ---
 
 ## 2. Git telepítése (ezzel töltjük le a leírásokat és a programokat)
+
+> Ha az A) útvonalon az `initial_setup.bat`-ot már lefuttattad, a Git megvan —
+> ugorhatsz a 4. pontra (videókártya-meghajtó).
 
 1. A PowerShellbe másold be ezt, majd `Enter`:
    ```powershell
@@ -95,6 +112,9 @@ ablakban kattints bele és nyomj `Ctrl+V`, végül `Enter`.
 ---
 
 ## 3. Python telepítése (ebben fut majd a ComfyUI)
+
+> Ha az A) útvonalon az `initial_setup.bat`-ot már lefuttattad, a Python megvan —
+> ugorhatsz a 4. pontra.
 
 1. Új PowerShell ablakba másold be, majd `Enter`:
    ```powershell
@@ -140,12 +160,16 @@ az agent nem kattinthat helyetted.
 4. **Ha ez megvan, szólj az agentnek** („megvan a hozzáférés") — ő leellenőrzi,
    és csak utána indítja a nagy letöltést.
 
-> Ha nincs HuggingFace fiókod vagy nem kéred a hozzáférést, a MiniMax modell
-> akkor is működni fog — csak az LTX marad ki.
+> Ha nincs HuggingFace fiókod vagy nem kéred a hozzáférést, az LTX-részek
+> (a kisebb profil nagy része) nem fognak letöltődni — a MiniMax modell
+> (teljes profil) anélkül is működik.
 
 ---
 
 ## 6. A beállító csomag letöltése (ez a repo)
+
+> Ha az A) útvonalon ZIP-ből dolgozol, ezt a pontot kihagyhatod — már a kicsomagolt
+> mappában vagy. Ugorj a 7. pontra.
 
 1. PowerShellben menj oda, ahová tenni szeretnéd (pl. a Dokumentumok mappa).
    Példa — másold be, `Enter`:
@@ -194,6 +218,31 @@ másold ki az utolsó 20 sort és küldd el az agentnek.
 
 ## 8. Modellek letöltése — mit csinál a Download-Models.ps1?
 
+Két csomag közül választhatsz. Az ügynök alapból a **kisebb (`friend`) profilt**
+teszi fel — ez 8 GB-os videókártyán is elfut:
+
+- **`friend` (~23 GB):** LTX-2.5 videómodell tömörítve (kis memóriára szabott
+  változat), tömörített szövegértő, videó- és hang-dekóder, felskálázó és
+  időtartam-fej. Ehhez kell a HuggingFace-hozzáférés (5. pont) a dekóderek miatt.
+- **`full` (~86 GB):** a fentieken felül a MiniMax H3 csomag is (videó-agy,
+  szövegértő, dekóderek, 4 és 8 lépéses „turbó" gyorsítók). Erősebb kártyához
+  (16 GB-tól).
+
+Ha az ügynök dolgozik helyetted, ő választ (kérdezd meg tőle, melyiket tette fel).
+Kézzel így indítod (ugyanabban az ablakban, ahol a kulcsot beállítottad):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\Download-Models.ps1
+```
+
+Erősebb gépre, a teljes csomaghoz:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\Download-Models.ps1 -Profile full
+```
+
+Amit a parancs csinál, sorban:
+
 Először a hozzáférési kulcs (csak az LTX miatt kell; az 5. pontban kérted meg a
 hozzáférést, most a kulcsot adjuk oda a gépnek):
 
@@ -214,31 +263,34 @@ powershell -ExecutionPolicy Bypass -File scripts\Download-Models.ps1
 
 Amit csinál, sorban:
 
-1. Letölti a **MiniMax H3** csomagot (~46 GB): a videó-agy (tömörített `int8`
-   változat — direkt a kis memóriájú kártyákhoz), a szövegértő (`nvfp4`
-   tömörített), a videó- és hang-dekóderek, plusz a 4 és 8 lépéses „turbó"
-   gyorsítók. Ezekkel 8 GB videómemóriával is elfut a generálás.
-2. Letölti az **LTX-2.5** csomagot (~40 GB): a lepárolt, `int8` videó-agy
-   (csak 8 lépés kell neki!), a tömörített szövegértő, a gyors konvolúciós VAE,
-   a hang-VAE, a térbeli felskálázó (ez kell majd a videó felnagyításához) és az
-   időtartam-fej.
-3. Mindent a repo gyökerében lévő `models` mappába tesz (ez sincs verziókezelve —
-   túl nagy). A mappaszerkezetet direkt úgy alakítja ki, ahogy a ComfyUI várja
-   (`diffusion_models`, `text_encoders`, `vae`, `loras`, ...).
-4. Legenerálja a `tmp\ComfyUI\extra_model_paths.yaml` fájlt, ami megmondja a
+1. Letölti a választott csomagot a repo gyökerében lévő `models` mappába (ez sincs
+   verziókezelve — túl nagy). A mappaszerkezetet direkt úgy alakítja ki, ahogy a
+   ComfyUI várja (`diffusion_models`, `text_encoders`, `vae`, `loras`, ...).
+2. Legenerálja a `tmp\ComfyUI\extra_model_paths.yaml` fájlt, ami megmondja a
    ComfyUI-nak: „a modellek itt vannak". (Ez gépenként újragenerálódik, ezért
    nem tesszük verziókezelésbe.)
-5. A végén kilistázza a letöltött fájlokat méretekkel — összesen kb. 86 GB.
+3. A végén kilistázza a letöltött fájlokat méretekkel.
 
-Ez a leghosszabb lépés (gyors nettel is 15–40 perc). Ha megszakad (áramszünet,
+Ez a leghosszabb lépés (gyors nettel is 10–40 perc a profiltól függően). Ha megszakad (áramszünet,
 netkimaradás), **csak futtasd újra ugyanazt a parancsot** — onnan folytatja,
 ahol abbahagyta, nem kezdi elölről.
 
 ---
 
-## 9. Indítás — mit csinálnak a Start fájlok?
+## 9. Indítás — ComfyUI és SwarmUI
 
-Két egyforma lehetőség, válassz egyet:
+Két felület van. Az ügynök alapból a **SwarmUI**-t állítja be neked — ez a
+kényelmesebb, egyszerűbb kezelőfelület. A ComfyUI a „motorháztető alatt" fut.
+
+**SwarmUI indítása (ajánlott):** dupla kattintás a `scripts\Start-Swarm.bat`
+fájlon a Fájlkezelőben. Ezután a böngészőben nyisd meg:
+
+```
+http://127.0.0.1:7801
+```
+
+**ComfyUI indítása közvetlenül** (ha az ügynök ezt kéri, vagy kíváncsi vagy a
+csomópont-nézetre) — két egyforma lehetőség, válassz egyet:
 
 - **A)** PowerShellben (a repo gyökeréből):
   ```powershell
@@ -248,7 +300,7 @@ Két egyforma lehetőség, válassz egyet:
 
 Mindkettő ugyanazt csinálja: elindítja a ComfyUI szervert a saját gépeden
 (`127.0.0.1`, `8188`-as port), bekapcsolt Managerrel (`--enable-manager`).
-Az ablakban meg kell jelennie: `To see the GUI go to: http://127.0.0.1:8188`
+Az ablakban meg kell jelennie: `To see the GUI go to: http://127.0.0.1:8188`.
 **Ezt az ablakot ne csukd be**, amíg használni szeretnéd — ez maga a program.
 
 Most nyisd meg a böngészőt (Chrome / Edge / Firefox), és írd a címsorba:
@@ -258,6 +310,8 @@ http://127.0.0.1:8188
 ```
 
 Megjelenik a ComfyUI: csomópontokból álló munkafelület (node canvas).
+A kész munkafolyamatok a repo `workflows` mappájában vannak — az ügynök betölti
+neked az elsőt (LTX videókészítés), és végigvezet az első generáláson.
 - Fent a **Manager** gomb: itt telepíthetsz extra csomópontokat és frissítéseket.
 - A fogaskerék (Settings) → **Language**: a felület nyelve váltható
   (angol, német, francia, kínai, japán stb. — **magyar sajnos nincs** a csomagban,
