@@ -114,7 +114,7 @@ accents/spaces in the path.
 
 ## 8. memories.md discipline
 
-- Session start: read fenced state, obey it.
+- Session start: read fenced state, obey it - read head ~20 lines of memories.md .
 - Session end (or after any milestone/surprise): tick checkboxes, append 2–3
   sentences to the router log (what changed, why, what worked/failed/to-retry).
 - Keep it lean — routing table, not diary.
