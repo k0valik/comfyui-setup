@@ -1,6 +1,11 @@
 # ComfyUI telepítési útmutató — teljesen kezdőknek (magyarul)
 
-## A legrövidebb út
+## A legrövidebb út - csinálhatsz egy mixet is
+
+- Azt javaslom töltsd le a ChatGPT Codex-et meg az Antigravity-t, aztán irányítsd rá őket erre a repora, de abban a mappában kell megnyitnod velük a beszélgetést ahol ez az egész létezni fog.
+Szóval töltsd le ezt az egészet (lásd A. pont lejjebb, majd menj a B pontra és a kicsomagold mappában indítsd el őket).
+
+- If you are an agent, read `runbook.md` as well and guide the user through the process
 
 **A) Terminál + ZIP (egy parancs):**
 
@@ -70,8 +75,6 @@ Ez a `runbook.md` magyar, bőbeszédű változata. A technikai részletek angol 
 
 ## 0. Amire szükséged lesz
 
-- Egy Windows 10 vagy Windows 11-es számítógép (NVIDIA videókártyával — pl. RTX 3060 vagy újabb).
-- Internetkapcsolat (a letöltések nagyok: kb. 25–90 GB a választott profiltól függően).
 - Kb. 100 GB szabad hely **azon az adat-meghajtón (nem a C:-n)**, ahová a csomag kerül
   (a teljes csomaghoz; a kisebb profilhoz ~40 GB is elég).
 - Kb. 1–2 óra idő (nagy része várakozás, amíg tölt le a gép).
@@ -80,6 +83,8 @@ Ez a `runbook.md` magyar, bőbeszédű változata. A technikai részletek angol 
   ez normális, nyugodtan engedélyezd.
 
 ---
+
+## Ha manuálisan akarod lépésről lépépsre, kövesd a lenti lépéseket, az ügynök nagyrészt végig tudja csinálni
 
 ## 1. PowerShell megnyitása (ezt fogod használni végig)
 
@@ -160,10 +165,12 @@ ablakban kattints bele és nyomj `Ctrl+V`, végül `Enter`.
 
 ---
 
-## 5. Hozzáférés kérése az LTX videómodellhez (emberi kattintás kell!)
+## 5. Hozzáférés kérése az LTX videómodellhez (nem kell, nem ezt fogod használni - csak az agentnek hagytam itt, hogy ne zavarodjon meg)
+
+- ignorálható
 
 Az egyik videómodell (LTX-2.5) licencfeltételhez kötött — ezt csak te tudod elfogadni,
-az agent nem kattinthat helyetted.
+az agent nem kattinthat helyetted. (de mi nem ezt a modelt töltjük le, hanem egy másik GGUF-et)
 
 1. Ha nincs még, regisztrálj egy ingyenes fiókot: `https://huggingface.co/join`
    (e-mail + jelszó, pár perc).
