@@ -37,7 +37,7 @@ running, verify what was actually submitted.
 2. Then pick the task type:
    - "make/generate X" → Session playbook template flow, then `prompt-craft.md`.
    - "modify the workflow / change how it looks" → `workflow-editing.md`.
-   - "too slow / OOM / doesn't fit" → `constrained-hardware.md`.
+   - "too slow / OOM / doesn't fit" → `constrained-hardware.md`. - should *always* apply by default, read it in references the server might need restart, if you've verified a good working setup that has successfully generated at least an image, you MUST encode it in the skill references and in AGENTS.md and even adjust the startup script or the workflows if comfyui-related, so next time it starts off with a good baseline. Record baselines. 
    - "I saw a video style / want a specific format" → check
      `references/external-skill-catalog.md` (official H3 skill catalog) before
      building anything.
