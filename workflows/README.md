@@ -30,9 +30,25 @@ sablonokban van egy bekapcsolt, ami átfirja a promptodat — itt nincs). A te
 szöveged megy a modellbe. Az ügynök tudja ezt, és így együtt dolgoztok: az ügynök
 írja a profi promptot, a gép azt használja fel módosítás nélkül.
 
-⚠️ A civitai workflow 12,9 GB-os GGUF modellt kér (`LTX-2.5-Distilled-Q3_K_M.gguf`)
+⚠️ A civitai workflow 11,5 GB-os GGUF modellt kér (`LTX-2.5-Distilled-Q3_K_M.gguf`)
 és 3 node-csomagot (rgthree, Easy-Use, GGUF). Ezeket az ügynök telepíti
 (`scripts\Install-NodePacks.ps1` + modellletöltés) — kérdezd meg tőle.
+
+## Video — YouTube-ról hozott LTX workflow-k (az ügynök állítja be őket)
+
+Ezeket YouTube-videókból hoztuk, erősebbek az alapoknál — de az ügynöknek kell őket
+az első használat előtt a gépedhez igazítania (modellek kicserélése, saját képeid
+betétele). Csak szólj neki, hogy melyiket szeretnéd kipróbálni.
+
+| Fájl | Mit tud | Amit te babrálhatsz |
+|---|---|---|
+| `LTX_2.5_FLF2V_8GB_NATIVE_AUDIO_NEGATIVE.json` | **kezdő- és záróképből videó** (megmondod, mivel kezdődjön és mivel végződjön) + **ki-bekapcsolható gyári hang**; 8 GB-os kártyára tesztelt beállítások | kezdőkép, zárókép, prompt, hang ki/be |
+| `LTX2.5-director-2.0.json` | **rendezői mód**: idősáv-vezérlés (eleje–közepe–vége), többképes image-to-video, videó-folytatás és klip-hosszabbítás, szakaszonkénti promptok, folytonos hang | szegmens-prompteket, útmutató képek |
+| `RTX-SR-upscaler-video.json` | **videó-felnagyítás** NVIDIA RTX-szuperfelbontással (egy kész videót tesz élesebbé/nagyobbá) | bemeneti videó |
+
+Ezek plusz kiegészítőket kérhetnek (pl. Kijai-csomag, videós segédcsomag) és olyan
+modellváltozatokat, amik nincsenek fent a gépeden — az ügynök mindent telepít és
+átállít, csak kérdezd meg tőle. Az első beállítás pár perc, utána ugyanúgy működnek.
 
 ## Tippek a barátnak
 

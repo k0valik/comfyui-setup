@@ -44,6 +44,49 @@ ship pointing at the int8 encoder (`gemma4-12b-with-proj-ltx-2.5-comfy-int8-conv
 - Swap on-demand both ways: slower machine / long renders -> w4a8; quality-critical
   run with VRAM headroom -> int8 (download from MODELS.md catalog first).
 
+## YouTube-curated workflows (inspect + adapt before first run)
+
+Three workflows from YouTube videos live in `workflows/` (friend-facing blurbs in
+`workflows/README.md`). Doctrine: NEVER run as-is — inspect, swap, record.
+
+**Inspection checklist (every curated workflow, before first queue):**
+1. Extract all loader widget filenames (DiT/TE/VAE/LoRA/GGUF) — script pattern:
+   parse JSON, list nodes whose type contains Load/Loader/GGUF + their
+   widgets_values. Compare against `models/`: HAVE vs NEED.
+2. List custom node types (anything outside core: KJ/LTX*, rgthree, VHS_, Easy-Use,
+   RTX*) → missing packs install via `comfy node install`, then RECORD in
+   node-packs list + restart backend.
+3. Find personal inputs (LoadImage/VHS_LoadVideo pointing at someone else's files)
+   → swap with the user's own images/video (narrate in HU).
+4. Subgraphs hide loaders/rewriters — check `definitions.subgraphs` too.
+5. `TextGenerateLTX2Prompt` (or any prompt rewriter) → SURFACE to the user before
+   queueing (drive hard rule), even when the workflow keeps it by design.
+6. Record every swap in the session + `workflows/README.md` if it becomes the
+   recommended path for a profile.
+
+**Per-workflow maps (verified 2026-09-16 by JSON inspection, NOT yet run):**
+
+- `LTX_2.5_FLF2V_8GB_NATIVE_AUDIO_NEGATIVE.json` — official-template-derived FLF2V
+  (first+last frame) in a subgraph, native-audio ON/OFF via ComfySwitchNode guider
+  select. References BOTH int8-official and w4a8_convrot DiT+TE (switchable):
+  friend profile → select w4a8_convrot (Winnougan, 12.5+10.6GB, catalog — NOT
+  downloaded by default); full profile → int8 works as-is. VAEs referenced as
+  `ltx-2.5-video-vae-bf16` (NON-conv — not in our manifest; swap widget to our
+  `-conv-` file or download the non-conv) + audio VAE (have). KEEPS
+  `TextGenerateLTX2Prompt` enhancer by design → surface it, offer OFF. LoadImage
+  slots = author's personal PNGs → swap. 8GB-tested settings per author.
+- `LTX2.5-director-2.0.json` — timeline directing (LTXDirector/Guide, segment
+  prompts, first/mid/last guidance, v2v continuation). REQUIRES Kijai nodes
+  (`DiffusionModelLoaderKJ`, `LTXDirector*`, `LTXV*` → install Kijai pack) +
+  VHS (`VHS_VideoCombine` → VideoHelperSuite, NOT in default pack set) + rgthree.
+  VAE widgets non-conv → swap to conv. CLIP int8 → friend swaps w4a8 encoder.
+  DiT int8 via KJ loader (full profile has it).
+- `RTX-SR-upscaler-video.json` — 3 nodes: VHS_LoadVideo →
+  `RTXVideoSuperResolution` → VHS_VideoCombine. REQUIRES the RTX VSR node pack
+  (exact registry name unconfirmed — `comfy node update-cache`, search, install,
+  RECORD the name here) + VHS. Input = author's mp4 → swap with user's video.
+  Needs RTX card (both our machines qualify).
+
 ## Node packs (installed into tmp/ComfyUI/custom_nodes via `comfy node install`)
 
 Current known set (keep updated as workflows demand):

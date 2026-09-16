@@ -16,12 +16,14 @@ discipline: official/most-downloaded repos, selective `hf download` via
 Model node — alternative to GGUF, no ComfyUI-GGUF pack needed).
 
 ## Catalog — LTX-2.5
-
 | What | Repo / file | Size | Notes |
 |---|---|---|---|
 | GGUF DiT ladder | https://huggingface.co/realrebelai/LTX-2.5_GGUFs | Q2_K 8.8 / Q3_K_M 11.5 / Q4_K_S 13.9 / Q4_K_M 15.1 / Q5_K_M 16.8 / Q6_K 18.7 / Q8_0 23.6 GB | Q3_K_M = curated workflow default; go UP for quality, DOWN for VRAM |
 | w4a8 DiT (native) | https://huggingface.co/realrebelai/Rebels_w4a8s — `LTX/LTX-2.5-Distilled-w4a8.safetensors` (+ `-audiofix` 15.2GB) | 12.5 GB | stock nodes; `asym_w4a8_int8` kernels (needs 20-series+) |
 | w4a8 encoder | same repo — `LTX/ENCODERS/gemma4-12b-ltx25-w4a8.safetensors` (+ `-v2`) | 8.4 GB | stock CLIPLoader; friend-profile default; swap = one widget edit |
+| w4a8_convrot DiT (distilled/dev) | https://huggingface.co/Winnougan/ltx-2.5-w4a8-convrot-int4-convrot-Winnougan-Blessing — `diffusion_models/ltx-2.5-22b-{distilled,dev}-transformer-w4a8_convrot.safetensors` | 12.5 GB each | OPEN repo (no token); selected by the FLF2V curated workflow; INT4 files mentioned in its README are NOT uploaded (only w4a8 present) |
+| w4a8_convrot encoder | same Winnougan repo — `text_encoders/gemma4-12b-with-proj-ltx-2.5-w4a8_convrot.safetensors` | 10.6 GB | OPEN repo; alternative to the Rebels w4a8 encoder |
+| video VAE (non-conv) | https://huggingface.co/Lightricks/LTX-2.5/blob/main/vae/ltx-2.5-video-vae-bf16.safetensors | ~1.5 GB | GATED; referenced by Director/FLF2V workflows — swap widget to our `-conv-` file instead of downloading |
 | VAEs (both) | https://huggingface.co/Lightricks/LTX-2.5/tree/main/vae | 1.45 + 0.36 GB | in both profiles |
 | Upscalers | https://huggingface.co/Lightricks/LTX-2.5/tree/main/latent_upscale_models | 1.0 GB spatial (+0.26 temporal) | spatial in both profiles |
 
