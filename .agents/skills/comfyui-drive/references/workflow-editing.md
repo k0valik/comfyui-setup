@@ -44,6 +44,22 @@ ship pointing at the int8 encoder (`gemma4-12b-with-proj-ltx-2.5-comfy-int8-conv
 - Swap on-demand both ways: slower machine / long renders -> w4a8; quality-critical
   run with VRAM headroom -> int8 (download from MODELS.md catalog first).
 
+## Quant dedup (canonical models — read BEFORE downloading anything)
+
+Different workflows reference different people's quants of the SAME base model
+(same role, same loader family) — they are functionally interchangeable. NEVER
+download the same role twice in different quant clothing because 4 workflows name
+4 files. Canonical source: realrebelai (most downloaded = best-tested). Procedure:
+1. Workflow needs file X with role R (DiT / text encoder / VAE / upscaler).
+2. If a canonical file for R is already in `models/` → widget-swap the workflow
+   to it (narrate with nicknames, see HU glossary), do NOT download X.
+3. Download X only if: no canonical file for R exists, or canonical provably
+   fails (OOM / validation error) — then record WHY in the session + MODELS.md.
+4. The friend CAN pick files in UI dropdowns when guided (nickname + filename +
+   where to click) but prefers the agent to do it.
+
+Canonical picks live in `MODELS.md` (§Canonical picks).
+
 ## YouTube-curated workflows (inspect + adapt before first run)
 
 Three workflows from YouTube videos live in `workflows/` (friend-facing blurbs in

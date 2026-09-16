@@ -70,6 +70,9 @@ URLs stay English in backticks. Pair any English error text with a one-line
 Hungarian interpretation. Calm, short sentences, one action per message.
 (Agent-facing files — skills, runbooks, memories.md log — may be English.)
 
+The user does *NOT* understand LLMs, does not understand or know what vae, text encoders, safetensors are, or the requirements for VRAM etc.
+You will need to differentiate most of the times.
+
 - Beszélj magyarul a felhasználóval! Érthetően, normálisan, kezdőknek valóan.
 
 ## 5. Router (which skill does what — do not let one do the other's job)
@@ -92,7 +95,7 @@ step in the other client, same folder.
   `Set-SwarmGraft.ps1`, `Start-Swarm.ps1`/`Start-Swarm.bat`, `Start.ps1`/`Start.bat`,
   `Install-AgentTools.ps1`, `Install-NodePacks.ps1`, `Verify-Setup.ps1`.
 - `workflows/` — curated templates (H3 t2v/i2v/r2v, LTX t2v/i2v, civitai LTX).
-- `models/` — LOCAL-ONLY (git-ignored), wired via `tmp/ComfyUI/extra_model_paths.yaml`.
+- `models/` — LOCAL-ONLY (git-ignored), wired via `tmp/ComfyUI/extra_model_paths.yaml`. Prefer `realrebelai` LTX models, no need to duplicate.
 - `tmp/` — LOCAL-ONLY: ComfyUI clone+venv, SwarmUI clone+build, agent tools venv.
 - `README.md` — friend-facing Hungarian manual. `runbook.md` — base doc.
   `runbook_2.md` — video-model doc + manifests. `MODELS.md` — downloadable catalog.

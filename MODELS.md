@@ -5,6 +5,19 @@ the on-demand catalog. The agent downloads from this catalog on request (setup
 discipline: official/most-downloaded repos, selective `hf download` via
 `Download-Models.ps1` patterns or venv `huggingface_hub`, record what was added).
 
+## Canonical picks (one file per role — workflows get swapped TO these, never re-downloaded around)
+
+| Role (nickname) | Canonical file | Why |
+|---|---|---|
+| videó-agy, GGUF (friend) | `LTX-2.5-Distilled-Q3_K_M.gguf` 11.5GB (realrebelai) | most-downloaded quant; matches curated civitai workflow |
+| videó-agy, native (friend alt) | `LTX-2.5-Distilled-w4a8.safetensors` 12.5GB (Rebels) | no GGUF pack needed |
+| videó-agy (full) | `ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors` (Lightricks) | official |
+| szövegértő (friend) | `gemma4-12b-ltx25-w4a8.safetensors` 8.4GB (Rebels) | smallest working |
+| szövegértő (full) | `gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors` (Lightricks) | official |
+| képösszerakó | `ltx-2.5-video-vae-conv-bf16.safetensors` (Lightricks) | workflows naming the non-conv file get swapped to this |
+| hangagy | `ltx-2.5-audio-vae-bf16.safetensors` (Lightricks) | only one |
+| felnagyító | `ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors` (Lightricks) | only one |
+
 ## Profiles
 
 | Profile | Target | Contents | Size | Set by |

@@ -94,6 +94,33 @@ If logs pasted with staged installs:
   `<HU interpretáció>`. Két javaslatom van: `<opció A>` vagy `<opció B>`. Melyiket
   csináljam?
 
+## Fogalmak a barátnak (concept glossary — NEVER use the English tech term unexplained)
+
+The friend's mental model: images/text go in, images/videos come out, "somehow the
+TV-static noise becomes a picture". They do NOT know: VAE, safetensors, text
+encoder, diffusion model, quant, LoRA. Rules:
+
+- Agent-facing reasoning keeps exact filenames; human-facing text uses ONLY the
+  nicknames below (+ the filename in backticks IF they must pick it in the UI).
+- If the friend must change a model dropdown in the UI themselves, give:
+  Hungarian nickname + exact filename + where to click
+  ("a szövegértő melletti legördülőben válaszd a `...safetensors` fájlt").
+- Never lecture. One concept per message, only when needed for the next action.
+
+| Nickname (HU, use this) | What it is | One-line explanation for the friend |
+|---|---|---|
+| a videó-agy / a rajzoló | diffusion model (DiT/UNET, .safetensors/.gguf) | "Ez rajzolja ki a képet a hangyás-zajos semmiből, lépésről lépésre." |
+| a szövegértő | text encoder (CLIP) | "Ez olvassa el a leírásodat, és súgja meg a rajzolónak, hogy mit rajzoljon." |
+| a képösszerakó | VAE (decoder) | "Ez rakja össze a kész képet a rajzoló vázlatából — vele lesz éles." |
+| tömörített változat | quantized model (int8 / w4a8 / GGUF / nvfp4) | "Ugyanaz a rajzoló, csak kisebb helyen elfér — a kis kártyádhoz kell." |
+| gyorsító | LoRA / turbo LoRA | "Rövidítő: kevesebb lépésből is szép képet ad, gyorsabb." |
+| felnagyító | upscaler | "A kész kis videót nagyítja fel élesre." |
+| hangagy | audio VAE / audio head | "Ez csinálja a hangot a videó alá." |
+
+Key sentence when swapping (send adapted):
+> Két fájl ugyanannak a rajzolónak a két tömörítése — a tieddel megyek tovább,
+> nem töltök le belőle még egyet. A workflow-ban átállítom, neked semmi dolgod.
+
 ## Final handover (send at done)
 
 > Kész, minden felment és működik! A lényeg a jövőre:
