@@ -26,17 +26,39 @@
 > 2. Nyisd meg: `https://huggingface.co/Lightricks/LTX-2.5` és kattints a nagy
 >    **„Agree and Access"** gombra. Ez egy engedély, hogy letölthessük az egyik
 >    videómodellt. Ha ez nincs megkattintva, a letöltés hibát fog dobni.
-> 3. Nyisd meg: `https://huggingface.co/settings/tokens` → **Create new token** →
->    név: akármi (pl. `comfyui`), típus: **Read** → Create → másold ki a
->    `hf_...` kezdetű kódot, és illeszd be ide a chatbe.
+> 3. Nyisd meg: `https://huggingface.co/settings/tokens` → jobb fent **Create new
+>    token** → név: akármi (pl. `comfyui`), típus: **Read** (csak olvasás) →
+>    **Create token** → másold ki a `hf_...` kezdetű kódot (hosszú karaktersor),
+>    és illeszd be ide a chatbe.
 >
-> A kódot csak gépeden használjuk fel a letöltéshez, sehol máshova nem kerül.
+> A kódot csak a gépeden használjuk fel a letöltéshez, sehol máshova nem kerül.
+> Ha a 3. lépés nem megy (nem találod a gombot, nem másolódik), szólj — van B-terv:
+> 4 kis fájlt kézzel is le tudsz tölteni, én megmondom pontosan melyiket és hova.
+
+### Fallback: manual browser download (no token needed — only login + Agree)
+
+Use when token creation fails: the big weights (GGUF, w4a8) are open repos and
+download token-free anyway; only these 4 small Lightricks files (~3 GB) need the
+gated repo, and the browser downloads them with just login + Agree. Send:
+
+> Semmi gond, van B-terv, token nélkül is megy. Csak annyi kell, hogy be legyél
+> lépve a HuggingFace-re, és a 2. lépés (Agree and Access) meglegyen.
+> Nyisd meg ezeket az oldalakat EGYENKÉNT, mindegyiken kattints a **Download**
+> gombra, és a letöltött fájlt tedd a megadott mappába (a `comfyui-setup` mappán
+> belül — ha nincs ilyen almappa, hozd létre):
+> 1. `https://huggingface.co/Lightricks/LTX-2.5/blob/main/vae/ltx-2.5-video-vae-conv-bf16.safetensors` → `models\vae` mappa
+> 2. `https://huggingface.co/Lightricks/LTX-2.5/blob/main/vae/ltx-2.5-audio-vae-bf16.safetensors` → `models\vae` mappa
+> 3. `https://huggingface.co/Lightricks/LTX-2.5/blob/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors` → `models\latent_upscale_models` mappa
+> 4. `https://huggingface.co/Lightricks/LTX-2.5/blob/main/model_patches/ltx-2.5-duration-head-bf16.safetensors` → `models\model_patches` mappa
+> Ha mind a 4 a helyén van, szólj, és én folytatom (a script a meglévő fájlokat
+> kihagyja, csak a hiányzó nagy fájlokat tölti le).
 
 Verify: API 200 → then (HU):
 
-> Szuper, a kulcs működik. Indítom a letöltést — ez kb. 86 GB, gyors neten 15-40
-> perc. Ha megszakad, nem baj, csak újra futtatom, onnan folytatja, ahol abbahagyta.
-> Közben nyugodtan csinálj mást, szólok, ha kész.
+> Szuper, a kulcs működik. Indítom a letöltést — ez a kisebb csomagnál kb. 23 GB
+> (10–25 perc), a teljesnél kb. 86 GB (15–60 perc), gyors neten. Ha megszakad,
+> nem baj, csak újra futtatom, onnan folytatja, ahol abbahagyta. Előtte ellenőrzöm,
+> hogy van-e elég szabad hely. Közben nyugodtan csinálj mást, szólok, ha kész.
 
 ### Gate: SwarmUI wizard (stage 4) — after Start-Swarm.ps1
 
@@ -51,8 +73,9 @@ Verify: API 200 → then (HU):
 ### Gate: first generation (stage 5)
 
 > Az utolsó teszt: a SwarmUI-ban a felül lévő `Comfy Workflow Editor` fülön nyisd
-> meg az egyik munkafolyamatot (pl. `video_minimax_h3_t2v.json` a `workflows`
-> mappából), kattints **„Use This Workflow"**, majd a Generate gombra.
+> meg a munkafolyamatot, amit mondok (kisebb csomagnál az LTX-eset, teljesnél a
+> MiniMax-eset a `workflows` mappából), kattints **„Use This Workflow"**, majd a
+> Generate gombra.
 > Az első generálás lassú (2-10 perc) — normális. Ha kész a kép/videó, vagy ha piros
 > hibát látsz, szólj.
 

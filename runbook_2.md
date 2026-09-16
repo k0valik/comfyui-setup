@@ -10,7 +10,7 @@
 
 ## 1. Agent one-time setup: hf CLI skill
 
-1. The HuggingFace skill lives at `.agents/hf-cli/SKILL.md` and **is committed** to this repo.
+1. The HuggingFace skill lives at `.agents/skills/hf-cli/SKILL.md` and **is committed** to this repo.
    Read it before any Hub work (`hf`, `huggingface`, model downloads, auth).
 2. The `hf` CLI runs in the **dev environment** (here: WSL2). Model files are data —
    downloading from WSL onto the shared drive is fine. Never `pip install` from WSL.

@@ -77,6 +77,12 @@ Run: `$env:HF_TOKEN="<tok>"; powershell -ExecutionPolicy Bypass -File scripts\Do
   Catalog of everything else: `MODELS.md` (repo root).
 - friend profile: also run `scripts\Install-NodePacks.ps1` (GGUF/rgthree/Easy-Use).
 - Interrupted → re-run same command (resumes). Expired/401 → token issue, re-gate.
+  No-token fallback: big weights (GGUF, w4a8) are open repos and download fine
+  without a token (only slower/rate-limited if anonymous); only the 4 small
+  Lightricks files are gated. If token creation fails: run the script WITHOUT
+  token for the open files, send the HU manual-download fallback
+  (hungarian-communication.md) for the 4 files (~3 GB, browser + login + Agree,
+  exact links + target subfolders), then re-run the script — existing files skip.
 - Completion: script lists the profile's files; Verify-Setup models section PASSes
   (profile-aware).
 

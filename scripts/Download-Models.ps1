@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   Download video-model files into repo-root models/ (git-ignored), then wire up
   tmp/ComfyUI/extra_model_paths.yaml.
@@ -59,6 +59,27 @@ function Get-RepoFiles($RepoId, $Patterns) {
   & $VenvPy -c $code
 }
 
+# Gated repo (Lightricks): needs Agree-and-Access + token. On 401/403, print the
+# MANUAL fallback (browser download, no token needed - just login + Agree) instead
+# of dying cryptically. snapshot_download skips files already on disk, so after a
+# manual download the human just re-runs this script and it completes.
+function Get-GatedRepoFiles($RepoId, $Patterns) {
+  try {
+    Get-RepoFiles $RepoId $Patterns
+  } catch {
+    Write-Host "`n[FAIL] gated download failed ($RepoId). Most likely: no HF_TOKEN, token expired," -ForegroundColor Red
+    Write-Host "or 'Agree and Access' not clicked on https://huggingface.co/$RepoId" -ForegroundColor Red
+    Write-Host "MANUAL FALLBACK (no token needed - browser, logged in, after Agree):" -ForegroundColor Yellow
+    Write-Host "download each file via its page's Download button into the given models/ subfolder:"
+    foreach ($p in $Patterns) {
+      $sub = ($p -split "/")[0]; $file = ($p -split "/")[-1]
+      Write-Host ("  https://huggingface.co/{0}/blob/main/{1}  ->  models/{2}/" -f $RepoId, $p, $sub)
+    }
+    Write-Host "Then re-run this script - existing files are skipped." -ForegroundColor Yellow
+    throw "gated repo download failed; manual fallback printed above"
+  }
+}
+
 if ($Profile -eq "friend") {
   # --- friend profile: 8GB-VRAM LTX stack (matches curated civitai workflow) ---
   Get-RepoFiles "realrebelai/LTX-2.5_GGUFs" @(
@@ -67,7 +88,7 @@ if ($Profile -eq "friend") {
   Get-RepoFiles "realrebelai/Rebels_w4a8s" @(
     "LTX/ENCODERS/gemma4-12b-ltx25-w4a8.safetensors"
   )
-  Get-RepoFiles "Lightricks/LTX-2.5" @(
+  Get-GatedRepoFiles "Lightricks/LTX-2.5" @(
     "vae/ltx-2.5-video-vae-conv-bf16.safetensors",
     "vae/ltx-2.5-audio-vae-bf16.safetensors",
     "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
@@ -97,7 +118,7 @@ elseif ($Profile -eq "full") {
   if (Test-Path "models/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors") {
     Move-Item -Force "models/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors" "models/loras/"
   }
-  Get-RepoFiles "Lightricks/LTX-2.5" @(
+  Get-GatedRepoFiles "Lightricks/LTX-2.5" @(
     "diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
     "text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
     "vae/ltx-2.5-video-vae-conv-bf16.safetensors",

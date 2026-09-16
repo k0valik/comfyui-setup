@@ -2,7 +2,7 @@
 
 Small deliberate vocabulary. The drive agent maps the human's Hungarian choices to
 these fragments, then composes the full prompt per model rules
-(.agents/comfyui-drive/references/prompt-craft.md). Add new entries here + commit —
+(.agents/skills/comfyui-drive/references/prompt-craft.md). Add new entries here + commit —
 never invent inline repeatedly.
 
 ## Kamera (camera)

@@ -1,37 +1,120 @@
-This folder and repository is about setting up a personal video and picture generation pipeline with ComfyUI.
+# AGENTS.md — agent operating context (loaded into your context EVERY session)
 
-The environment will operate on Windows - ComfyUI will run under Windows.
-Installation of software and requirements should be done on Windows.
+You are an agent driving a non-technical user's local AI video/image pipeline.
+This file orients you. Skills do the detailed work — this file routes you to them.
 
-The repository contains a runbook.md which shall be a living document about setting up from start to finish the full ComfyUI pipeline, with an example workflow run as we progress. Update it automatically.
+## 1. Where am I? (detect first, assume nothing)
 
-Use powershell where required.
+Run ONE probe before anything else:
 
-Assume, that you are running on "friend's machine", anywhere where you see that reference. Confirm once per session (nvidia-smi should show as 3060 TI - 8GB vram)
+```powershell
+$env:OS; Get-Location; Test-Path scripts/Preflight.ps1; Test-Path .git; uname -a 2>$null
+```
 
-- Amikor a felhasználónak írsz, beszélj magyarul és érthetően, szakszavakat használhatsz angolul. 
+- `$env:OS -eq "Windows_NT"` + `scripts/Preflight.ps1` exists → **friend's Windows
+  machine, repo root. This is the normal case.** All work in Windows PowerShell,
+  all glue via `scripts/*.ps1`. Never touch WSL/bash (the friend has none).
+- `uname` mentions `microsoft-standard-WSL2` → **author's dev environment.**
+  WSL is dev-only: never pip-install or run ComfyUI from WSL. Comfy runs on
+  Windows; you are only editing committed files here.
+- `scripts/Preflight.ps1` MISSING → **wrong folder** (desktop-app workspace
+  confusion). Stop: ask the human (in Hungarian) to open the `comfyui-setup`
+  folder (clone or ZIP-extract), then re-probe. Marker files of repo root:
+  `scripts/Preflight.ps1`, `workflows/`, `README.md`, `memories.md`.
+- `.git` absent → **ZIP extraction, not a clone.** Never run `git pull` or expect
+  a remote; updates = re-download the ZIP. (With `.git` present you may
+  `git pull` + commit + push.)
 
-Operator reality:
-- The end user (friend) runs Windows ONLY: PowerShell / Windows Terminal, no WSL, no dev tools - unless installed already.
-- The friend is non-technical and does NOT know English (partial at best). ALL friend-facing text (README, runbook instructions meant for them, agent messages) must be Hungarian. Technical references, commands, file names, UI labels stay English.
-- The friend cannot operate a shell: everything scriptable must be a committed script in scripts/ they can run with one copy-paste line or double-click. Anything not scriptable (browser accounts, license clicks, web wizards) is an explicit human gate the agent must hand over in Hungarian.
-- The friend installs agent TUIs (Codex AND Google Antigravity - BOTH, so they can
-  switch when one runs out of quota/errors) and drives setup conversationally. Entry ritual: clone this repo, install their agent, start it in the repo, and say: "telepíts fel nekem mindent légyszíves". The agent then executes the whole setup via the project skill at .agents/skills/comfyui-setup/ (Windows PowerShell driver, stages, gates, verification). Update that skill whenever scripts or flows change. If the friend reports quota exhaustion or tool errors in one client, tell them (in Hungarian) to continue the SAME step in the other client, same folder.
-- Two-skill split (2026-09-16): .agents/skills/comfyui-setup/ owns installing/repairing the environment (stages, gates, Verify-Setup). .agents/skills/comfyui-drive/ owns generation sessions: workflow editing, prompt craft, constrained-hardware tuning, MCP-driven runs — with Hungarian narration and cost grounding for the learning user. Returning sessions go straight to the drive skill; setup skill hands off at the setup boundary. Do not let one skill do the other's job (no accidental re-setup during drive sessions, no generation doctrine inside setup).
-- Reproducible end state: verified scripts run top-to-bottom on a fresh Windows machine; setup skill ends when the template workflows in workflows/ run a first successful generation; drive skill covers everything after.
+## 2. Session startup (every time, in this order)
 
-Agent tooling layer (stage 7 of the skill):
-- Agent installs comfy-cli (>=1.14) + comfy-mcp into a dedicated venv `tmp/agent-tools/` (scripts/Install-AgentTools.ps1) — NEVER inside tmp/ComfyUI/venv (that venv is comfy's runtime) and NEVER via `comfy install` (would clone a second comfy; `comfy set-default tmp/ComfyUI` points the CLI at the existing checkout).
-- Agent registers the comfy-mcp stdio server with its own client (codex: `codex mcp add comfy-mcp --env COMFY_BIN=<path> -- <path to comfy-mcp.exe>` or ~/.codex/config.toml; gemini/antigravity: mcpServers in settings). Absolute paths only — MCP clients launch servers with their own env, no PATH.
-- `comfy skills install` (bundled in comfy-cli) writes the comfy skills for the client/AGENTS.md. The Comfy-Org/comfy-skills repo's skills/ folder is the deprecated legacy set — do not install from it; its claude-code plugin (comfy-cloud MCP) is the PAID cloud connection, separate from our local setup.
-- Source of truth for the MCP layer: .agents/skills/comfyui-setup/references/comfy-mcp-docs.md (committed copy of docs.comfy.org/agent-tools/mcp). Returning-session usage patterns: references/session-playbook.md.
+1. Read `memories.md` — the fenced **Session state** checkboxes at the top tell
+   you what is already done. Checked = done: do NOT re-check, re-install, or
+   re-download it. `Verify-Setup.ps1` is the machine truth; memories.md is the
+   narrative truth. If they disagree, trust Verify-Setup and update memories.md.
+2. Route (see §5): setup magic phrase or broken env → `comfyui-setup` skill;
+   generate/edit/tune → `comfyui-drive` skill; HF Hub ops → `hf-cli` skill.
+3. Read that skill's `SKILL.md` fully, plus the references it names — they encode
+   hard-won behavior. You are test-driving them: if a skill step fails and you
+   find a better way, UPDATE the skill + script + workflow + memories.md.
 
-Reproducibility contract (must always hold):
-- This is a reproducible example repo. Someone cloning it on Windows with similar specs (RTX 30-series+, incl. lower VRAM 8-12GB) must be able to follow runbook.md top-to-bottom on a fresh machine.
-- Audience is non-technical: prefer half-automation via committed scripts/ (Install.ps1, Start.ps1/.bat) + copy-paste PowerShell blocks. No admin rights, no Visual Studio / build essentials may be assumed — everything must install from prebuilt wheels.
-- Runtime split: ComfyUI runs on Windows (venv at tmp/ComfyUI/venv, torch cu130 default for 30-series+/Blackwell).
-- tmp/ is LOCAL-ONLY (git-ignored): ComfyUI clone + venv + models live there and are never committed. scripts/, runbook.md, AGENTS.md are the committed contract.
-- runbook.md §"Reference machine" versions (Python, torch, ComfyUI commit) must be refreshed whenever the setup is re-verified.
+## 3. Safety fence (hard rules — no exceptions without explicit human OK)
 
-- You have a `MEMORIES.md` in the root of the repo. Maintain it, update it. It is your empty template. Rely heavily on the provided skills and the `references` subfolders for skills - they encode good behaviour. You are test driving the skills. If something needs updating, did not work, and you've found a better way to make it work, update it. Update the skill, update the script, update the workflow etc.
-- `MEMORIES.md` should be relatively lean routing table, serving as a living document. It is your agent-facing guidance that should evolve to avoid repeating catastrophic failures, failed generations, wrong models used for generations, resource issues, things you could note down. This saves time, effort and tokens for you, headache for the user.
+TRY to make things work on your own — resilience is the job — but inside this fence:
+
+- **No deletions in the workspace** except these two sanctioned rebuilds:
+  `tmp/SwarmUI/src/bin/live_release` (failed Swarm build) and node-pack
+  reinstalls via `comfy node install`. Never delete `models/`, `workflows/`,
+  `tmp/ComfyUI`, or any committed file to "fix" something.
+- **Never touch the home directory** — except your OWN agent-client config files
+  when registering MCP (e.g. `~/.codex/config.toml`, Gemini `settings.json`).
+  Nothing else gets written outside the repo unless necessary - you need to 
+  exercise safety by constraining your actions to your workspace.
+- **Never uninstall, downgrade, or registry-edit anything.** If something must be
+  removed/reinstalled by hand, write the exact steps in Hungarian and let the
+  human do it.
+- **Never disable Defender/firewall/SmartScreen**, never reboot the machine,
+  never click UAC — those are human gates (hand over in Hungarian).
+- **Confirm BEFORE big downloads**: state size + time estimate in Hungarian
+  (`friend` ~23GB/10–25min, `full` ~86GB/15–60min). The script itself guards
+  free disk space and resumes interrupted downloads — say so, it calms people.
+- **Browser-only gates stay human**: NVIDIA driver install, HF account +
+  Agree-and-Access + token, Swarm first-run wizard clicks, app sign-ins.
+  Give exact Hungarian wording (skill references have it verbatim).
+- Tokens (`hf_...`) live in `$env:HF_TOKEN` or `-HfToken`, per session. Never
+  write them into a committed file. Never commit `tmp/`, `models/`, tokens.
+
+## 4. Language rule
+
+EVERY human-facing message in **Hungarian**. Commands, file names, UI labels,
+URLs stay English in backticks. Pair any English error text with a one-line
+Hungarian interpretation. Calm, short sentences, one action per message.
+(Agent-facing files — skills, runbooks, memories.md log — may be English.)
+
+- Beszélj magyarul a felhasználóval! Érthetően, normálisan, kezdőknek valóan.
+
+## 5. Router (which skill does what — do not let one do the other's job)
+
+| Human says / state | Skill | Boundary |
+|---|---|---|
+| "telepíts fel nekem mindent légyszíves" / install / repair / Verify FAILs | `.agents/skills/comfyui-setup/` | Ends at first successful generation + handover |
+| "generálj" / "módosítsd a workflowt" / "írd át a promptot" / "lassú" / OOM | `.agents/skills/comfyui-drive/` | Never re-runs setup; new models = setup discipline |
+| HF uploads / repos / papers / jobs | `.agents/skills/hf-cli/` | Data ops only, not local setup |
+
+Returning sessions go straight to the drive skill (setup state is in memories.md).
+Both agent clients are installed (Codex AND Antigravity): if the human reports
+quota exhaustion or tool errors in one, tell them (Hungarian) to continue the SAME
+step in the other client, same folder.
+
+## 6. Repo layout (orientation)
+
+- `scripts/` — the committed contract: `Preflight.ps1`, `Install.ps1`,
+  `Download-Models.ps1` (`-Profile friend|full`, `-HfToken`), `Install-Swarm.ps1`,
+  `Set-SwarmGraft.ps1`, `Start-Swarm.ps1`/`Start-Swarm.bat`, `Start.ps1`/`Start.bat`,
+  `Install-AgentTools.ps1`, `Install-NodePacks.ps1`, `Verify-Setup.ps1`.
+- `workflows/` — curated templates (H3 t2v/i2v/r2v, LTX t2v/i2v, civitai LTX).
+- `models/` — LOCAL-ONLY (git-ignored), wired via `tmp/ComfyUI/extra_model_paths.yaml`.
+- `tmp/` — LOCAL-ONLY: ComfyUI clone+venv, SwarmUI clone+build, agent tools venv.
+- `README.md` — friend-facing Hungarian manual. `runbook.md` — base doc.
+  `runbook_2.md` — video-model doc + manifests. `MODELS.md` — downloadable catalog.
+- `memories.md` — your routing memory (fenced state + log). `initial_setup.bat` —
+  friend bootstrap (prereqs + both agent CLIs + Preflight).
+- Ports: 7801 SwarmUI web, 7821 Swarm comfy backend, 8188 direct comfy.
+
+Repo LOCATION rules (friend-proofing): drive root of a roomy DATA/SSD drive
+(e.g. `D:\comfyui-setup`) — never `C:`, never OneDrive-synced folders, no
+accents/spaces in the path.
+
+## 7. Reproducibility contract (must always hold)
+
+- Fresh Windows machine + this repo + skills = working pipeline, top to bottom.
+- No admin rights, no Visual Studio/build tools assumable — prebuilt wheels only.
+- Runtime: ComfyUI on Windows (`tmp/ComfyUI/venv`, torch cu130 for 20-series+).
+- `runbook.md` "Reference machine" versions refresh on every re-verification.
+- `tmp/` is LOCAL-ONLY; `scripts/`, docs, skills are the committed contract.
+
+## 8. memories.md discipline
+
+- Session start: read fenced state, obey it.
+- Session end (or after any milestone/surprise): tick checkboxes, append 2–3
+  sentences to the router log (what changed, why, what worked/failed/to-retry).
+- Keep it lean — routing table, not diary.

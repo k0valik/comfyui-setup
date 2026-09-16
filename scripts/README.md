@@ -8,7 +8,7 @@ comfy-cli (uses the `tmp/agent-tools` venv). Idempotent. Run:
 Optional: `-Packs "rgthree-comfy,ComfyUI-Easy-Use,ComfyUI-GGUF"` to override the set.
 Restart the backend afterwards (Swarm: Restart All Backends).
 
-Curated default set (why: see .agents/comfyui-drive/references/workflow-editing.md):
+Curated default set (why: see .agents/skills/comfyui-drive/references/workflow-editing.md):
 
 - `rgthree-comfy` — group bypassers/reroutes (LTX civitai workflow)
 - `ComfyUI-Easy-Use` — VRAM hygiene nodes (cleanGpuUsed), proven on 8GB
