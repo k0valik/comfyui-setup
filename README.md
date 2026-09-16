@@ -25,8 +25,10 @@ parancssori ügynököt (**Codex** és **Google Antigravity**). Direkt kell mind
 az ingyenes keret gyorsan elfogy, és ha az egyik azt írja, hogy elfogyott a kvótád
 vagy hibát ad, egyszerűen megnyitod a másikat ugyanabban a mappában, és ott
 folytatod. Ha kérdi, engedélyezd az adminisztrátori hozzáférést (UAC: Igen).
-Utána indítsd el az egyik ügynököt a mappában (terminálba: `codex`), és írd
-be neki: **„telepíts fel nekem mindent légyszíves"** — ezután ő visz végig mindenen
+Utána indítsd el az egyik ügynököt a mappában (terminálba: `codex` vagy `agy` ennyit beírsz).
+Ezután itt is majd be kell jelentkezned (azt hiszem nyomsz egy okét és feldob egy böngésző ablakot amit leokézol, majd visszamész a terminálba)
+
+és utána írd be neki: **„telepíts fel nekem mindent légyszíves, használd a `comfyui-setup` skillt"** — ezután ő visz végig mindenen
 (ComfyUI, modellek, SwarmUI, munkafolyamatok).
 
 **B) Asztali alkalmazással (ChatGPT app / Google Antigravity app):**
