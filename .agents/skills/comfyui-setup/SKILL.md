@@ -69,6 +69,7 @@ Gate: human does 3 browser things (HU wording in reference):
 3. create Read token at `https://huggingface.co/settings/tokens`, paste it to agent.
 Verify token: `Invoke-WebRequest -Headers @{Authorization="Bearer <tok>"} https://huggingface.co/api/models/Lightricks/LTX-2.5` → 200.
 Run: `$env:HF_TOKEN="<tok>"; powershell -ExecutionPolicy Bypass -File scripts\Download-Models.ps1`
+(or pass `-HfToken "<tok>"` to the script — equivalent, survives new shells).
 - **Profile default = `friend`** (~23GB: LTX GGUF Q3_K_M DiT + w4a8 encoder + VAEs +
   upscaler + duration head; matches the curated civitai workflow). `-Profile full`
   = the verified 16GB reference manifest (~86GB incl. H3) for machines with VRAM

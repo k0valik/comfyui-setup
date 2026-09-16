@@ -20,7 +20,9 @@
   H3 on 8GB is an EXPERIMENT TRACK (drive skill) - not part of either default profile.
 
   Usage:
-    powershell -ExecutionPolicy Bypass -File scripts/Download-Models.ps1 [-Profile friend|full] [-WithW4A8DiT]
+    powershell -ExecutionPolicy Bypass -File scripts/Download-Models.ps1 [-Profile friend|full] [-WithW4A8DiT] [-HfToken "hf_..."]
+  The -HfToken parameter is an alternative to setting $env:HF_TOKEN beforehand
+  (the env var is per-shell: opening a new PowerShell loses it).
   Needs: tmp/ComfyUI/venv (Install.ps1). $env:HF_TOKEN must hold a Read token from
   https://huggingface.co/settings/tokens AND the human must have clicked "Agree and
   Access" on https://huggingface.co/Lightricks/LTX-2.5 (gated repo). Realrebelai
@@ -29,11 +31,22 @@
 param(
   [string]$Profile = "friend",
   [switch]$WithW4A8DiT,
+  [string]$HfToken = "",
   [string]$RepoRoot = ""
 )
 $ErrorActionPreference = "Stop"
+if ($HfToken) { $env:HF_TOKEN = $HfToken }
 if (-not $RepoRoot) { $RepoRoot = Split-Path -Parent $PSScriptRoot }
 Set-Location $RepoRoot
+
+# --- Free-space guard: fail early with a clear message instead of dying mid-download ---
+$needGB = if ($Profile -eq "full") { 95 } elseif ($WithW4A8DiT) { 45 } else { 30 }
+$drive = (Get-Item $RepoRoot).PSDrive.Name
+$freeGB = [math]::Round(((Get-PSDrive $drive).Free / 1e9), 1)
+if ($freeGB -lt $needGB) {
+  Write-Error ("Not enough free space on drive {0}: {1} GB free, need ~{2} GB for profile '{3}'. Free up space or move the repo to a bigger drive." -f $drive, $freeGB, $needGB, $Profile)
+}
+Write-Host ("Drive {0}: {1} GB free, need ~{2} GB - OK" -f $drive, $freeGB, $needGB)
 
 $VenvPy = "tmp/ComfyUI/venv/Scripts/python.exe"
 if (-not (Test-Path $VenvPy)) { Write-Error "venv not found. Run scripts/Install.ps1 first." }

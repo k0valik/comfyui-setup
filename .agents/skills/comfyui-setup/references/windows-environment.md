@@ -69,6 +69,12 @@
 ## URLs
 
 - Repo: `https://github.com/k0valik/comfyui-setup` (clone target for the friend).
+- Repo LOCATION rules (friend-proofing): drive root of a DATA drive with ample free
+  space (e.g. `D:\comfyui-setup`) — NEVER `C:` (system drive; friend has ~4 drives —
+  pick the roomiest SSD). Short ASCII path, NO accents/spaces (breaks venv/pip);
+  NEVER inside a OneDrive-synced folder (Documents often is — it would try to
+  upload tens of GB of tmp/ + models/). Same rules for ZIP extraction.
+  (Drivers/helper tools install to C: by themselves — that part is automatic.)
 - LTX gate: `https://huggingface.co/Lightricks/LTX-2.5` (Agree and Access).
 - Token: `https://huggingface.co/settings/tokens` (type Read).
 - Templates: `https://github.com/Comfy-Org/workflow_templates/tree/main/templates`

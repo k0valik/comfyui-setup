@@ -5,10 +5,16 @@
 **A) Terminál + ZIP (egy parancs):**
 
 Görgess fel a GitHub oldal tetejére, kattints a zöld **„Code"** gombra, majd a
-**„Download ZIP"** gombra. Mentsd el a ZIP-et olyan helyre, ahol van elég szabad
-tárhely (kb. 100 GB). Csomagold ki, lépj bele a mappába, nyomj egy **Shift + jobb
-egérgombot egy üres helyre**, válaszd az **„Open PowerShell window here"**
-menüpontot, és írd be:
+**„Download ZIP"** gombra. Mentsd el a ZIP-et **NE a C: (rendszer) meghajtóra**, hanem
+egy adat-meghajtóra, ahol sok szabad hely van — lehetőleg SSD-re (pl. `D:`). Ökölszabály:
+Fájlkezelő → Ez a gép → nézd meg a meghajtókat, és azt válaszd, amelyik **nem** a C:,
+és van rajta legalább 40 GB (kisebb csomag) vagy 100 GB (teljes csomag) szabad hely.
+Minden itt fog lakni: a kicsomagolt mappa, a modellek (több tíz GB), és az ügynökök is
+itt fognak dolgozni. A driverek és a segédprogramok maguktól a C: meghajtóra kerülnek —
+azzal nem kell foglalkoznod. A mappaútban **ne legyen ékezet és szóköz** — például
+egyenesen a meghajtó gyökerébe csomagold ki: `D:\comfyui-setup`. (A Dokumentumok mappa
+sokszor OneDrive-val szinkronizál — oda NE tedd, mert a több tíz GB-nyi fájlt próbálná
+feltölteni.)
 
 ```powershell
 .\initial_setup.bat
@@ -64,7 +70,8 @@ Ez a `runbook.md` magyar, bőbeszédű változata. A technikai részletek angol 
 
 - Egy Windows 10 vagy Windows 11-es számítógép (NVIDIA videókártyával — pl. RTX 3060 vagy újabb).
 - Internetkapcsolat (a letöltések nagyok: kb. 25–90 GB a választott profiltól függően).
-- Kb. 100 GB szabad hely a lemezen (a teljes csomaghoz; a kisebb profilhoz ~40 GB is elég).
+- Kb. 100 GB szabad hely **azon az adat-meghajtón (nem a C:-n)**, ahová a csomag kerül
+  (a teljes csomaghoz; a kisebb profilhoz ~40 GB is elég).
 - Kb. 1–2 óra idő (nagy része várakozás, amíg tölt le a gép).
 - Semmilyen programozói tudás nem kell. Rendszergazdai jóváhagyást (UAC: „Igen" gomb)
   csak egyszer kérhet a gép, amikor az `initial_setup.bat` a segédprogramokat telepíti —
@@ -136,6 +143,10 @@ ablakban kattints bele és nyomj `Ctrl+V`, végül `Enter`.
 
 ## 4. NVIDIA driver (videókártya meghajtó)
 
+> Az `nvidia-smi` parancs a driverrel együtt települ — külön nem kell semmit
+> feltenned érte. CUDA fejlesztőcsomag (CUDA toolkit) sem kell: a ComfyUI-hoz
+> tartozó gyorsítót az Install.ps1 hozza magával automatikusan. Csak a driver kell.
+
 1. Böngészőben: `https://www.nvidia.com/drivers/` → válaszd ki a kártyádat
    (pl. GeForce RTX 4070) → Download → telepítés → **újraindítod a gépet**.
 2. Újraindítás után, PowerShellben ellenőrzés:
@@ -171,10 +182,13 @@ az agent nem kattinthat helyetted.
 > Ha az A) útvonalon ZIP-ből dolgozol, ezt a pontot kihagyhatod — már a kicsomagolt
 > mappában vagy. Ugorj a 7. pontra.
 
-1. PowerShellben menj oda, ahová tenni szeretnéd (pl. a Dokumentumok mappa).
+1. PowerShellben menj arra az adat-meghajtóra, amit választottál (**ne** a C:-re —
+   az a rendszeré; pl. a `D:` meghajtó gyökere a legjobb). A mappaútban **ne legyen
+   ékezet vagy szóköz**, és **ne OneDrive-val szinkronizált mappa legyen** (a
+   Dokumentumok sokszor az — a több tíz GB-nyi fájlt próbálná feltölteni).
    Példa — másold be, `Enter`:
    ```powershell
-   cd $HOME\Documents
+   D:
    ```
 2. Töltsd le a csomagot:
    ```powershell
