@@ -1,6 +1,6 @@
 ---
 name: comfyui-setup
-description: Drive a non-technical Hungarian-speaking Windows user through the full local AI video/image pipeline setup (ComfyUI + SwarmUI + 86GB of MiniMax-H3/LTX-2.5 models + workflow templates) using this repo's committed PowerShell scripts. Trigger on the magic phrase "telepíts fel nekem mindent légyszíves" or any "install/set up comfyui/swarmui for me" request from the repo. Do not use for: WSL/Linux-side development, post-setup generation tuning (runbook_2.md), or HF Hub data operations (hf-cli skill).
+description: Drive a non-technical Hungarian-speaking Windows user through the full local AI video/image pipeline setup (ComfyUI + SwarmUI + 86GB of MiniMax-H3/LTX-2.5 models + workflow templates) using this repo's committed PowerShell scripts. Trigger on the magic phrase "telepíts fel nekem mindent légyszíves" or any "install/set up comfyui/swarmui for me" request from the repo.
 ---
 
 # ComfyUI Setup Driver (Windows, Hungarian end-user)
