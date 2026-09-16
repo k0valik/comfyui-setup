@@ -7,6 +7,8 @@ description: Drive a non-technical Hungarian-speaking Windows user through the f
 
 ## Philosophy
 
+**Start by reading README.md to understand what the user is guided through** this skill is complimentary to the readme, so you make their work easier, as they are not familiar with agent environments and any CLI tooling, installing tools, python venv, downloading models from huggingface etc.
+
 One phrase in, working pipeline out. The human only does what only a human can:
 browser accounts, license clicks, wizard clicks, waiting. Everything scriptable is a
 committed script — run it, never hand-roll its steps. User-facing text is Hungarian;
