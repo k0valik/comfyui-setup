@@ -9,6 +9,10 @@ description: Drive a non-technical Hungarian-speaking Windows user through the f
 
 **Start by reading README.md to understand what the user is guided through** this skill is complimentary to the readme, so you make their work easier, as they are not familiar with agent environments and any CLI tooling, installing tools, python venv, downloading models from huggingface etc.
 
+- Rely heavily on the references and the scripts provided. They have not been vetted yet, so you might need to fix them, do short double-checks to save effort (did models really download? did comfyui download?).
+- If you are stuck anywhere that you can't solve, discuss with the user, tell them exactly what you need from them and how they should do it. Don't look for unsafe escape hatches.
+- Use web search if you need some help, or clone the real comfyui repo (see references) locally so you can confirm stuff instead of falling back to assumptions. A lot has been changed since your training cutoff date.
+
 One phrase in, working pipeline out. The human only does what only a human can:
 browser accounts, license clicks, wizard clicks, waiting. Everything scriptable is a
 committed script — run it, never hand-roll its steps. User-facing text is Hungarian;
