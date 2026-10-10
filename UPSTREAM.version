@@ -1,0 +1,4 @@
+2026-10-10-feat-remote-maintenance
+comfy-cli skills upstream: c5de2ee (2026-10-10)
+commits: ... handoff-docs-v8, shape-first-reframe, handover-md, handoff-docs-v9, maintainer-review-v10
+flow: HANDOVER.md (the paste, best-effort agenda) -> shape read (§3) -> merge (§1-5) -> CHECKPOINT §6 (incl. H3) -> client restart -> Qwen §7 OPTIONAL -> Finish §8 (report file + compacted second-pass sweep)
