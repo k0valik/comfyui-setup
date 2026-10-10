@@ -1,6 +1,12 @@
 # local ComfyUI clone + venvs + models (large, reinstallable)
 tmp/
-models/
+models/**
+# ...except small sidecars: manifests, download receipts, READMEs under models/
+# may be committed (binaries *.gguf/*.safetensors stay ignored — GitHub caps at 100MB anyway).
+!models/**/
+!models/**/*.md
+!models/**/*.txt
+!models/**/*.json
 __pycache__/
 *.pyc
 .venv/

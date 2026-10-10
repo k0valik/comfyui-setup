@@ -1,6 +1,6 @@
 ---
 name: comfyui-drive
-description: Drive an EXISTING ComfyUI+SwarmUI install (this repo's layout, wired via comfy-mcp) for actual generation work - modify workflows, rewrite prompts, run templates, tune for constrained VRAM, narrate every change in Hungarian for the learning user. Use when the setup is already done (tmp/ComfyUI + models exist) and the user asks to generate/edit/improve/tune ("generálj", "módosítsd a workflowt", "írd át a promptot", "lassú", "OOM"). Do not use for installing or repairing the environment (comfyui-setup skill), HF Hub data ops (hf-cli skill), or WSL-side dev.
+description: Drive an EXISTING ComfyUI+SwarmUI install (this repo's layout, wired via comfy-mcp) for actual generation work - modify workflows, rewrite prompts, run templates, tune for constrained VRAM, narrate every change in Hungarian for the learning user. Use when the setup is already done (tmp/ComfyUI + models exist) and the user asks to generate/edit/improve/tune ("generálj", "módosítsd a workflowt", "írd át a promptot", "lassú", "OOM"). Do not use for installing or repairing the environment (archived setup skill), or HF Hub data ops (hf-cli skill).
 ---
 
 # ComfyUI Drive (generation sessions)
@@ -61,7 +61,7 @@ running, verify what was actually submitted.
 
 ## Hard rules
 
-- ALL user-facing text Hungarian (`../comfyui-setup/references/hungarian-communication.md`).
+- ALL user-facing text Hungarian (`references/hungarian-communication.md`).
 - `validate_workflow` before EVERY queue — stale node names/wrong types are caught
   in seconds, not after a 40-minute render.
 - NEVER queue a workflow containing `TextGenerateLTX2Prompt` (or any LLM prompt
@@ -70,11 +70,10 @@ running, verify what was actually submitted.
   has it OFF by design — keep it that way. When the agent is the director, double
   rewriting is waste: agent rewrites → rewriter rewrites → both wrong.
 - NEVER add models/nodes ad hoc. New model file = setup discipline (official repos,
-  selective download, manifest update, `../comfyui-setup/SKILL.md` rules). New node
+  selective download, manifest update, `../../../archive/setup-legacy/comfyui-setup/SKILL.md` rules). New node
   pack = `comfy node install` + record in node-packs note.
 - Never claim a render time without the calibration table + hardware check
-  (nvidia-smi via Verify-Setup). Friend profile (8GB) and author profile (16GB) have
-  different default presets — check which machine you are on.
+(nvidia-smi via Verify-Setup). This machine's card decides the preset — check `nvidia-smi` output, never assume.
 - Batch edits, don't drip: group all changes for the next render, narrate each.
 - Outputs: one dated HU-named folder per batch; report the full Windows path.
 
@@ -131,8 +130,15 @@ stopped per user's wish.
   guide, H3 prompt structure, enhancer policy, preset vocabulary.
 - `references/constrained-hardware.md` — on slow/OOM/fit complaints: VRAM levers,
   valid dimension/frame grids, GGUF track, calibration data.
+- `references/image-qwen.md` — Qwen-Image-2.1 UNCENSORED image generation on the 8GB card: leejet GGUF-fork swap (with LTX regression check), official-template adapt, quant/resolution ladders, benchmark protocol.
 - `references/external-skill-catalog.md` — before building a new workflow: official
   MiniMax H3 skills (8 style generators + prompt-writing) worth fetching instead.
 - `references/sources/` — verbatim clippings the distilled refs are built from.
-- `../comfyui-setup/references/comfy-mcp-docs.md` — MCP tool reference.
-- `../comfyui-setup/references/hungarian-communication.md` — language rules + phrases.
+- `references/comfy-mcp-docs.md` — MCP tool reference.
+- `references/hungarian-communication.md` — language rules + phrases.
+- `../comfy/SKILL.md` — comfy CLI surface (discovery vs execution, templates, cloud auth). Read before any `comfy` CLI command beyond `node install`.
+- `../comfy-debug/SKILL.md` — when a CLI workflow/run fails: read the JSON envelope first, map `error.code` to the fix.
+- `../comfy-custom-nodes/SKILL.md` — when writing/fixing a custom node pack (V3 API).
+- `../comfy-director/SKILL.md` — when asked for a narrative multi-shot video (ad, short, trailer, music video).
+- `../comfy-relay/SKILL.md` — presentation layer for creative work: show visual previews, iterate visually.
+- `../comfy-deploy/SKILL.md` + `../comfy-deploy-failures/SKILL.md` — only for Cloud deployments (`comfy deploy ...`), needs `comfy cloud login`.
