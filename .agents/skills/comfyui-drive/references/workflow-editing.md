@@ -102,6 +102,35 @@ Three workflows from YouTube videos live in `workflows/` (friend-facing blurbs i
   (exact registry name unconfirmed — `comfy node update-cache`, search, install,
   RECORD the name here) + VHS. Input = author's mp4 → swap with user's video.
   Needs RTX card (both our machines qualify).
+- `ltx25Pure2K3KUltraLow_v10.json` — civitai 2K/3K PREMIUM i2v (maintainer-added
+  2026-10-10, source: https://civitai.com/models/2877939/ltx-25-pure-2k3k-ultra-low-vram-universal-workflow?modelVersionId=3252415 — check for newer versions; UNVETTED, JSON-inspected only, never run). Concept: input upscale
+  to 2K/3K (Swin2SR X2 + GLSL sharpness) BEFORE the generator (bypasses weak
+  latent math), Tiled VAE cascade (tile 512), RIFE VFI + sharpness shader to
+  48fps. 9 RU-named subgraphs (notes inside are the manual — READ them, they
+  hold the <12GB rewiring + prompt doctrine). Vetting checklist: (1) check
+  system RAM FIRST — author demands 32GB for full res, else lower input res;
+  (2) loaders reference GATED int8 DiT+TE (full profile) + NON-conv video VAE →
+  friend profile swaps to GGUF Q3_K_M + w4a8 encoder (quant-dedup rule) + conv
+  VAE, or downloads gated int8s as fallback; (3) extra files: `rife49.pt`,
+  `swin2srUpscalerX2And_customX2Safetensor.safetensor`, vocoder
+  `ltx-av-step-1751000_vocoder_24K.safetensors` — locate via HF/Manager, record
+  sources here; (4) packs: Kijai (`ImageResizeKJv2`), VHS, RIFE VFI node,
+  GLSLShader node, Get/Set (rgthree), LTXV 2.5 nodes — install missing, restart
+  backend; (5) 8GB path = author's own <12GB rewiring (disable Swin2SR input
+  upscale, bypass Resize-v2 straight to generator, 960x544 or 768²);
+  (6) prompt doctrine: `[bracket tags]` FIRST (camera-static/zoom-none), 4-block
+  structure, motion bucket 16–32, distilled = 8–10 steps, audio prompt written
+  manually (else white-noise hallucination) — translate to HU for the user,
+  tags stay English (model commands); (7) 5–10s clips are the sweet spot.
+  Potentially REPLACES RTX-SR as the recommended upscale path if vetted.
+  (8) FRONTEND TRANSLATION: subgraph names + Get/Set wire names are ALREADY
+  Hungarian upstream (Videó-generátor, Felskálázó, Prompt-útmutató, kezdőkép,
+  képkockák, ... — renamed 2026-10-10 with pair structure verified identical).
+  What REMAINS Russian: the Note/MarkdownNote BODIES (prompt doctrine, rewiring
+  guide). Translate those to Hungarian during vetting (keep in-graph).
+  EXCEPTION: English `[bracket tags]` stay English verbatim — they are model
+  commands, translating them breaks generation. After any further rename,
+  re-`validate_workflow` and record the name map in the session log.
 
 ## Node packs (installed into tmp/ComfyUI/custom_nodes via `comfy node install`)
 

@@ -50,6 +50,14 @@ Ezek plusz kiegészítőket kérhetnek (pl. Kijai-csomag, videós segédcsomag) 
 modellváltozatokat, amik nincsenek fent a gépeden — az ügynök mindent telepít és
 átállít, csak kérdezd meg tőle. Az első beállítás pár perc, utána ugyanúgy működnek.
 
+## Video — LTX-2.5 2K/3K prémium felskálázó (civitai, átvétel ALATT — előbb szólj az ügynöknek!)
+
+| Fájl | Mit tud | Amit te babrálhatsz (miután az ügynök beállította) |
+|---|---|---|
+| `ltx25Pure2K3KUltraLow_v10.json` | **éles, részletgazdag videó** trükkel: a képet ELŐRE felnagyítja 2K/3K-ra, úgy adja a modellnek (így a modell nem mossa szét a részleteket), a végén pedig élesít + simít 48 fps-re | prompt (szögletes `[parancs]`-okkal az elején!), felbontás, élesítés mértéke |
+
+Státusz: ⚠️ ez még **nincs beállítva a gépedre** — az ügynöknek kell előbb átnéznie (másik modellváltozatot kér, mint ami fent van, plusz pár kiegészítőt). Ha kipróbálnád, mondd neki: „állítsd be a 2K/3K workflow-t". 8 GB-os kártyán működik (az ügynök átköti alacsonyabbra), de a RAM-odat is megnézi előtte — 32 GB alatt kisebb felbontással megy.
+
 ## Tippek a barátnak
 
 - Az első generálás mindig lassabb (a modellnek be kell töltődnie).
